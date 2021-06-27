@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import RNAppRatingComponent from '../components/RNAppRatingComponent';
 import {RNAppRatingContext} from './RNAppRatingContext';
-import {ACTION_EVENT, FEEDBACK, POSITIVE_RATING_THRESHOLD, RATING, STORE_RATING_CONFIRMATION} from '../constants';
+import {ACTION_EVENT, FEEDBACK, RATING, STORE_RATING_CONFIRMATION} from '../constants';
 import DEFAULT_CONFIG from '../config/Config';
 
 const RNAppRatingProvider = props => {
