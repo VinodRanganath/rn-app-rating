@@ -5,7 +5,13 @@ import {RNAppRatingContext} from '../../provider/RNAppRatingContext';
 import {FEEDBACK, RATING, STORE_RATING_CONFIRMATION} from '../../constants';
 
 const ActionBar = props => {
-  const {config, showRateNever, onPositiveActionPress, onNeutralActionPress = () => {}, onNegativeActionPress = () => {}} = props;
+  const {
+    config,
+    showRateNever,
+    onPositiveActionPress,
+    onNeutralActionPress = () => {},
+    onNegativeActionPress = () => {},
+  } = props;
   const {stage} = useContext(RNAppRatingContext);
 
   return (

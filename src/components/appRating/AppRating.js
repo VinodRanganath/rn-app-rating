@@ -36,7 +36,7 @@ const AppRating = () => {
   const storeRatingConfirmationStage = (
     <StoreRatingConfirmation
       config={storeRatingConfirmationConfig}
-      onPositiveActionPress={() => fireActionEvent(ACTION_EVENT.SUBMIT)}
+      onPositiveActionPress={() => fireActionEvent(ACTION_EVENT.SUBMIT, {storeRating: true})}
       onNeutralActionPress={() => fireActionEvent(ACTION_EVENT.RATE_LATER)}
       onNegativeActionPress={() => fireActionEvent(ACTION_EVENT.RATE_NEVER)}
     />

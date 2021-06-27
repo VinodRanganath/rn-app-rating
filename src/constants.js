@@ -29,6 +29,15 @@ const RATING_VALUE = {
 
 const POSITIVE_RATING_THRESHOLD = 4;
 
+const INITIAL_APP_RATING_RESPONSE = {
+  rating: 0,
+  feedback: '',
+  storeRating: false,
+  rateLater: false,
+  rateNever: false,
+  journeyCancelled: false,
+};
+
 export {
   RATING,
   FEEDBACK,
@@ -40,4 +49,5 @@ export {
   STORE_RATING_ICON,
   RATING_VALUE,
   POSITIVE_RATING_THRESHOLD,
+  INITIAL_APP_RATING_RESPONSE,
 };
