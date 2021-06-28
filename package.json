@@ -27,11 +27,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/VinodRanganath/rn-app-rating.git",
-    "baseUrl": "https://github.com/VinodRanganath/rn-app-rating"
+    "url": "https://github.com/VinodRanganath/rn-app-rating.git"
   },
   "keywords": [
-    "react-native"
+    "react-native",
+    "react native component",
+    "mobile",
+    "ios",
+    "ios store rating",
+    "android",
+    "android store rating",
+    "app rating",
+    "in-app rating",
+    "custom in-app rating"
   ],
   "author": {
     "name": "Vinod Ranganath",
@@ -40,6 +48,10 @@
   "license": "MIT",
   "licenseFilename": "LICENSE",
   "readmeFilename": "README.md",
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-native": ">=0.60.0"
+  },
   "devDependencies": {
     "@testing-library/react-native": "^7.2.0",
     "babel-eslint": "^10.1.0",
@@ -51,8 +63,6 @@
     "jest-config": "26.6.3",
     "metro-react-native-babel-preset": "^0.66.0",
     "prettier": "^2.3.1",
-    "react": "17.0.1",
-    "react-native": "0.64.1",
     "react-test-renderer": "^17.0.2"
   }
 }
