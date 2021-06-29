@@ -14,7 +14,7 @@ const AppRating = () => {
     feedback: feedbackConfig,
     storeRatingConfirmation: storeRatingConfirmationConfig,
   } = config;
-  const ratingStage = (
+  const ratingStage = ratingConfig.component || (
     <Rating
       config={ratingConfig}
       rating={rating}
@@ -24,16 +24,16 @@ const AppRating = () => {
       onNegativeActionPress={() => fireActionEvent(ACTION_EVENT.RATE_NEVER)}
     />
   );
-  const feedbackStage = (
+  const feedbackStage = feedbackConfig.component || (
     <Feedback
       config={feedbackConfig}
       feedback={feedback}
       onFeedbackChange={feedbackValue => setFeedback(feedbackValue)}
-      onPositiveActionPress={() => fireActionEvent(ACTION_EVENT.SUBMIT, {feedback})}
+      onPositiveActionPress={() => feedback?.length > 0 && fireActionEvent(ACTION_EVENT.SUBMIT, {feedback})}
       onNegativeActionPress={() => fireActionEvent(ACTION_EVENT.CANCEL)}
     />
   );
-  const storeRatingConfirmationStage = (
+  const storeRatingConfirmationStage = storeRatingConfirmationConfig.component || (
     <StoreRatingConfirmation
       config={storeRatingConfirmationConfig}
       onPositiveActionPress={() => fireActionEvent(ACTION_EVENT.SUBMIT, {storeRating: true})}

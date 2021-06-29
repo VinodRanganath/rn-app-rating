@@ -1,13 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import RNAppRatingComponent from '../components/RNAppRatingComponent';
 import {RNAppRatingContext} from './RNAppRatingContext';
-import {
-  ACTION_EVENT,
-  FEEDBACK,
-  INITIAL_APP_RATING_RESPONSE,
-  RATING,
-  STORE_RATING_CONFIRMATION,
-} from '../constants';
+import {ACTION_EVENT, FEEDBACK, INITIAL_APP_RATING_RESPONSE, RATING, STORE_RATING_CONFIRMATION} from '../constants';
 import DEFAULT_CONFIG from '../config/Config';
 
 const RNAppRatingProvider = props => {
@@ -36,13 +30,23 @@ const RNAppRatingProvider = props => {
       case ACTION_EVENT.SUBMIT:
         appRatingResponse.current = {...appRatingResponse.current, ...param};
         if (stage === RATING) {
-          if (param?.rating >= config.rating.positiveRatingThreshold) setStage(STORE_RATING_CONFIRMATION);
-          else setStage(FEEDBACK);
+          if (param?.rating >= config.rating.positiveRatingThreshold) {
+            if (config.storeRatingConfirmation.skipStage) {
+              setShowRNAppRating(false);
+              // TODO: open native in-app rating popup
+              return;
+            }
+            setStage(STORE_RATING_CONFIRMATION);
+          } else setStage(FEEDBACK);
           return;
-        } else setShowRNAppRating(false);
+        } else {
+          setShowRNAppRating(false);
+          if (stage === STORE_RATING_CONFIRMATION) {
+            // TODO: open native in-app rating popup
+          }
+        }
         return;
       case ACTION_EVENT.RATE_LATER:
-        // TODO: send response if on STORE_RATING_CONFIRMATION stage
         appRatingResponse.current = {...appRatingResponse.current, rateLater: true};
         setShowRNAppRating(false);
         return;

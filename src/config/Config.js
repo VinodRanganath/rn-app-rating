@@ -9,6 +9,7 @@ import styles from '../components/styles';
 
 const DEFAULT_CONFIG = {
   rating: {
+    component: null,
     icon: APP_RATING_PROMPT_ICON,
     iconStyle: styles.appRatingPromptIcon,
     title: 'Rate Your Experience',
@@ -26,6 +27,7 @@ const DEFAULT_CONFIG = {
     negativeButtonTextStyle: styles.negativeActionText,
   },
   feedback: {
+    component: null,
     icon: FEEDBACK_ICON,
     iconStyle: styles.appRatingPromptIcon,
     title: 'Would you mind giving us your valuable feedback?',
@@ -43,6 +45,8 @@ const DEFAULT_CONFIG = {
     negativeButtonTextStyle: styles.negativeActionText,
   },
   storeRatingConfirmation: {
+    component: null,
+    skipStage: false,
     icon: STORE_RATING_ICON,
     iconStyle: styles.appRatingPromptIcon,
     title: 'Rate us on the store',

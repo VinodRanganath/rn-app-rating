@@ -1,13 +1,7 @@
 import React, {useContext, useEffect} from 'react';
 import {render} from '@testing-library/react-native';
 import {View} from 'react-native';
-import {
-  ACTION_EVENT,
-  FEEDBACK,
-  INITIAL_APP_RATING_RESPONSE,
-  RATING,
-  STORE_RATING_CONFIRMATION,
-} from '../constants';
+import {ACTION_EVENT, FEEDBACK, INITIAL_APP_RATING_RESPONSE, RATING, STORE_RATING_CONFIRMATION} from '../constants';
 import RNAppRatingProvider from './RNAppRatingProvider';
 import {RNAppRatingContext} from './RNAppRatingContext';
 import DEFAULT_CONFIG from '../config/Config';
