@@ -1,4 +1,4 @@
-import RNAppRating from './RNAppRating';
+import useRNAppRating from './hooks/useRNAppRating';
 import RNAppRatingProvider from './provider/RNAppRatingProvider';
 
-export {RNAppRatingProvider, RNAppRating};
+export {RNAppRatingProvider, useRNAppRating};

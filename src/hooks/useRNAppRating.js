@@ -1,7 +1,7 @@
 import {useContext} from 'react';
-import {RNAppRatingContext} from './provider/RNAppRatingContext';
+import {RNAppRatingContext} from '../provider/RNAppRatingContext';
 
-const RNAppRating = () => {
+const useRNAppRating = () => {
   const {setShowRNAppRating, fireActionEvent, setJourneyCompletionCallback, loadCustomRNAppRatingConfig} =
     useContext(RNAppRatingContext);
 
@@ -20,4 +20,4 @@ const RNAppRating = () => {
   return {initRNAppRating, showRNAppRatingPrompt, hideRNAppRatingPrompt, triggerActionEvent};
 };
 
-export default RNAppRating;
+export default useRNAppRating;

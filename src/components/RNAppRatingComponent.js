@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext} from 'react';
 import {Modal, View} from 'react-native';
 import {RNAppRatingContext} from '../provider/RNAppRatingContext';
 import styles from './styles';
@@ -8,12 +8,9 @@ import {ACTION_EVENT} from '../constants';
 const RNAppRatingComponent = () => {
   const {showRNAppRating, fireActionEvent} = useContext(RNAppRatingContext);
 
-  useEffect(() => {
-    console.log('RNAppRatingPrompt component');
-  }, [showRNAppRating]);
-
   return (
     <Modal
+      testID="rn-app-rating-modal"
       animationType="slide"
       hardwareAccelerated={true}
       transparent={true}

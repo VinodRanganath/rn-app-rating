@@ -1,3 +1,3 @@
-import {RNAppRatingProvider, RNAppRating} from './src';
+import {RNAppRatingProvider, useRNAppRating} from './src';
 
-export {RNAppRatingProvider, RNAppRating};
+export {RNAppRatingProvider, useRNAppRating};
