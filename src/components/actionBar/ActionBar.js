@@ -8,20 +8,22 @@ const ActionBar = props => {
   const {
     config,
     showRateNever,
-    onPositiveActionPress,
+    onPositiveActionPress = () => {},
     onNeutralActionPress = () => {},
     onNegativeActionPress = () => {},
   } = props;
   const {stage} = useContext(RNAppRatingContext);
 
   return (
-    <View style={styles.actionSection}>
+    <View testID="action-bar" style={styles.actionSection}>
       <View style={styles.actionBar}>
         <View style={styles.actionGroup}>
           <View style={styles.neutralAction}>
             {(stage === RATING || stage === STORE_RATING_CONFIRMATION) && (
-              <TouchableOpacity onPress={() => onNeutralActionPress()}>
-                <Text style={config.neutralButtonTextStyle}>{config.neutralButtonText}</Text>
+              <TouchableOpacity testID="action-bar-neutral-button" onPress={() => onNeutralActionPress()}>
+                <Text testID="action-bar-neutral-button-text" style={config.neutralButtonTextStyle}>
+                  {config.neutralButtonText}
+                </Text>
               </TouchableOpacity>
             )}
           </View>
@@ -29,14 +31,18 @@ const ActionBar = props => {
         <View style={styles.actionGroup}>
           <View style={styles.negativeAction}>
             {(stage === FEEDBACK || showRateNever) && (
-              <TouchableOpacity onPress={() => onNegativeActionPress()}>
-                <Text style={config.negativeButtonTextStyle}>{config.negativeButtonText}</Text>
+              <TouchableOpacity testID="action-bar-negative-button" onPress={() => onNegativeActionPress()}>
+                <Text testID="action-bar-negative-button-text" style={config.negativeButtonTextStyle}>
+                  {config.negativeButtonText}
+                </Text>
               </TouchableOpacity>
             )}
           </View>
           <View style={styles.positiveAction}>
-            <TouchableOpacity onPress={() => onPositiveActionPress()}>
-              <Text style={config.positiveButtonTextStyle}>{config.positiveButtonText}</Text>
+            <TouchableOpacity testID="action-bar-positive-button" onPress={() => onPositiveActionPress()}>
+              <Text testID="action-bar-positive-button-text" style={config.positiveButtonTextStyle}>
+                {config.positiveButtonText}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>

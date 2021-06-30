@@ -24,6 +24,7 @@
     "max-len": "off",
     "require-jsdoc": "off",
     "react/prop-types": "off",
-    "arrow-parens": "off"
+    "arrow-parens": "off",
+    "indent": "off"
   }
 }

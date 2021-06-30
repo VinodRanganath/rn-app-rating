@@ -17,7 +17,12 @@ const useRNAppRating = () => {
 
   const triggerActionEvent = (actionEvent, param) => fireActionEvent(actionEvent, param);
 
-  return {initRNAppRating, showRNAppRatingPrompt, hideRNAppRatingPrompt, triggerActionEvent};
+  return {
+    initRNAppRating,
+    showRNAppRatingPrompt,
+    hideRNAppRatingPrompt,
+    triggerActionEvent,
+  };
 };
 
 export default useRNAppRating;

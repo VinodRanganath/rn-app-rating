@@ -90,14 +90,20 @@ describe('RNAppRatingProvider tests', () => {
       render(<MockConsumerWrapper callback event={ACTION_EVENT.RATE_LATER} />);
 
       expect(mockCallback).toHaveBeenCalledTimes(1);
-      expect(mockCallback).toHaveBeenNthCalledWith(1, {...INITIAL_APP_RATING_RESPONSE, rateLater: true});
+      expect(mockCallback).toHaveBeenNthCalledWith(1, {
+        ...INITIAL_APP_RATING_RESPONSE,
+        rateLater: true,
+      });
     });
 
     it('should invoke custom callback with rateNever=true in response, on journey end, if RATE_NEVER event is fired', () => {
       render(<MockConsumerWrapper callback event={ACTION_EVENT.RATE_NEVER} />);
 
       expect(mockCallback).toHaveBeenCalledTimes(1);
-      expect(mockCallback).toHaveBeenNthCalledWith(1, {...INITIAL_APP_RATING_RESPONSE, rateNever: true});
+      expect(mockCallback).toHaveBeenNthCalledWith(1, {
+        ...INITIAL_APP_RATING_RESPONSE,
+        rateNever: true,
+      });
     });
 
     it('should invoke custom callback, on journey end, if CANCEL event is fired', () => {
@@ -111,7 +117,10 @@ describe('RNAppRatingProvider tests', () => {
       render(<MockConsumerWrapper callback event={ACTION_EVENT.CANCEL} param={{journeyCancelled: true}} />);
 
       expect(mockCallback).toHaveBeenCalledTimes(1);
-      expect(mockCallback).toHaveBeenNthCalledWith(1, {...INITIAL_APP_RATING_RESPONSE, journeyCancelled: true});
+      expect(mockCallback).toHaveBeenNthCalledWith(1, {
+        ...INITIAL_APP_RATING_RESPONSE,
+        journeyCancelled: true,
+      });
     });
   });
 

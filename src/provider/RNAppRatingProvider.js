@@ -47,11 +47,17 @@ const RNAppRatingProvider = props => {
         }
         return;
       case ACTION_EVENT.RATE_LATER:
-        appRatingResponse.current = {...appRatingResponse.current, rateLater: true};
+        appRatingResponse.current = {
+          ...appRatingResponse.current,
+          rateLater: true,
+        };
         setShowRNAppRating(false);
         return;
       case ACTION_EVENT.RATE_NEVER:
-        appRatingResponse.current = {...appRatingResponse.current, rateNever: true};
+        appRatingResponse.current = {
+          ...appRatingResponse.current,
+          rateNever: true,
+        };
         setShowRNAppRating(false);
         return;
       case ACTION_EVENT.CANCEL:
@@ -69,7 +75,10 @@ const RNAppRatingProvider = props => {
       ...config,
       rating: {...config.rating, ...customConfig.rating},
       feedback: {...config.feedback, ...customConfig.feedback},
-      storeRatingConfirmation: {...config.storeRatingConfirmation, ...customConfig.storeRatingConfirmation},
+      storeRatingConfirmation: {
+        ...config.storeRatingConfirmation,
+        ...customConfig.storeRatingConfirmation,
+      },
     };
     setConfig(tempConfig);
   };
