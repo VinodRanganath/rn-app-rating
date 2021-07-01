@@ -1,9 +1,9 @@
 import React, {useContext, useState} from 'react';
-import Rating from '../rating/Rating';
 import {RNAppRatingContext} from '../../provider/RNAppRatingContext';
 import {ACTION_EVENT, RATING, FEEDBACK, STORE_RATING_CONFIRMATION} from '../../constants';
-import StoreRatingConfirmation from '../storeRatingConfirmation/StoreRatingConfirmation';
+import Rating from '../rating/Rating';
 import Feedback from '../feedback/Feedback';
+import StoreRatingConfirmation from '../storeRatingConfirmation/StoreRatingConfirmation';
 
 const AppRating = () => {
   const [rating, setRating] = useState(0);
@@ -14,7 +14,9 @@ const AppRating = () => {
     feedback: feedbackConfig,
     storeRatingConfirmation: storeRatingConfirmationConfig,
   } = config;
-  const ratingStage = ratingConfig.component || (
+  const ratingStage = ratingConfig.component ? (
+    ratingConfig.component()
+  ) : (
     <Rating
       config={ratingConfig}
       rating={rating}
@@ -24,7 +26,9 @@ const AppRating = () => {
       onNegativeActionPress={() => fireActionEvent(ACTION_EVENT.RATE_NEVER)}
     />
   );
-  const feedbackStage = feedbackConfig.component || (
+  const feedbackStage = feedbackConfig.component ? (
+    feedbackConfig.component()
+  ) : (
     <Feedback
       config={feedbackConfig}
       feedback={feedback}
@@ -33,7 +37,9 @@ const AppRating = () => {
       onNegativeActionPress={() => fireActionEvent(ACTION_EVENT.CANCEL)}
     />
   );
-  const storeRatingConfirmationStage = storeRatingConfirmationConfig.component || (
+  const storeRatingConfirmationStage = storeRatingConfirmationConfig.component ? (
+    storeRatingConfirmationConfig.component()
+  ) : (
     <StoreRatingConfirmation
       config={storeRatingConfirmationConfig}
       onPositiveActionPress={() => fireActionEvent(ACTION_EVENT.SUBMIT, {storeRating: true})}
