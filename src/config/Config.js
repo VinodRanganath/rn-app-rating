@@ -19,6 +19,7 @@ const DEFAULT_CONFIG = {
     positiveRatingThreshold: POSITIVE_RATING_THRESHOLD,
     ratingIcon: RATING_STAR_ICON,
     ratingIconStyle: styles.starRating,
+    ratingIconFillStyle: styles.starRatingFill,
     positiveButtonText: 'Submit',
     positiveButtonTextStyle: styles.positiveActionText,
     neutralButtonText: 'Rate Later',

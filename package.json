@@ -1,18 +1,13 @@
 {
   "name": "rn-app-rating",
   "title": "Rn App Rating",
-  "version": "1.0.0",
+  "version": "0.0.1-alpha",
   "description": "TODO",
   "main": "src/index.js",
-  "module": "dist/index.esm.js",
-  "source": "src/index.js",
   "files": [
     "android",
     "index.js",
-    "ios",
     "rn-app-rating.podspec",
-    ".babelrc",
-    ".eslintrc",
     "prettier.config.js",
     "src"
   ],
@@ -38,7 +33,8 @@
     "android",
     "android store rating",
     "app rating",
-    "in-app rating",
+    "react native app rating",
+    "react native in-app rating",
     "custom in-app rating"
   ],
   "author": {

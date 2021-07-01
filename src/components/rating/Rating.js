@@ -2,7 +2,7 @@ import React from 'react';
 import {Image, Text, View} from 'react-native';
 import styles from '../styles';
 import ActionBar from '../actionBar/ActionBar';
-import StarInput from './StarInput';
+import RatingInput from '../ratingInput/RatingInput';
 
 const Rating = props => {
   const {config, rating, onRatingChange, onPositiveActionPress, onNeutralActionPress, onNegativeActionPress} = props;
@@ -22,7 +22,7 @@ const Rating = props => {
           </View>
         </View>
         <View style={styles.inputContainer}>
-          <StarInput config={config} rating={rating} onRatingChange={onRatingChange} />
+          <RatingInput config={config} rating={rating} onRatingChange={onRatingChange} />
         </View>
       </View>
       <ActionBar
