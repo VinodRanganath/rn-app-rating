@@ -26,20 +26,25 @@ const Feedback = props => {
     <View style={styles.modalContent}>
       <View style={styles.contentSection}>
         <View style={styles.iconContainer}>
-          <Image style={fetchIconStyle()} source={{uri: config.icon}} />
+          <Image testID="feedback-stage-icon" style={fetchIconStyle()} source={{uri: config.icon}} />
         </View>
         <View style={styles.descriptionContainer}>
           <View style={styles.descriptionTitle}>
-            <Text style={config.titleStyle}>{config.title}</Text>
+            <Text testID="feedback-stage-title" style={config.titleStyle}>
+              {config.title}
+            </Text>
           </View>
           {config.subtitle && (
-            <View style={styles.descriptionSubtitle}>
-              <Text style={config.subtitleStyle}>{config.subtitle}</Text>
+            <View testID="feedback-stage-subtitle-wrapper" style={styles.descriptionSubtitle}>
+              <Text testID="feedback-stage-subtitle" style={config.subtitleStyle}>
+                {config.subtitle}
+              </Text>
             </View>
           )}
         </View>
         <View style={styles.inputContainer}>
           <TextInput
+            testID="feedback-input"
             style={config.feedbackInputStyle}
             multiline
             numberOfLines={config.feedbackInputLines}

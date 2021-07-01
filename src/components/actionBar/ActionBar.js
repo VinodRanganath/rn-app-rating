@@ -21,7 +21,7 @@ const ActionBar = props => {
           <View style={styles.neutralAction}>
             {(stage === RATING || stage === STORE_RATING_CONFIRMATION) && (
               <TouchableOpacity testID="action-bar-neutral-button" onPress={() => onNeutralActionPress()}>
-                <Text testID="action-bar-neutral-button-text" style={(config.neutralButtonTextStyle || {})}>
+                <Text testID="action-bar-neutral-button-text" style={config.neutralButtonTextStyle || {}}>
                   {config.neutralButtonText}
                 </Text>
               </TouchableOpacity>
@@ -32,7 +32,7 @@ const ActionBar = props => {
           <View style={styles.negativeAction}>
             {(stage === FEEDBACK || showRateNever) && (
               <TouchableOpacity testID="action-bar-negative-button" onPress={() => onNegativeActionPress()}>
-                <Text testID="action-bar-negative-button-text" style={(config.negativeButtonTextStyle || {})}>
+                <Text testID="action-bar-negative-button-text" style={config.negativeButtonTextStyle || {}}>
                   {config.negativeButtonText}
                 </Text>
               </TouchableOpacity>
@@ -40,7 +40,7 @@ const ActionBar = props => {
           </View>
           <View style={styles.positiveAction}>
             <TouchableOpacity testID="action-bar-positive-button" onPress={() => onPositiveActionPress()}>
-              <Text testID="action-bar-positive-button-text" style={(config.positiveButtonTextStyle || {})}>
+              <Text testID="action-bar-positive-button-text" style={config.positiveButtonTextStyle || {}}>
                 {config.positiveButtonText}
               </Text>
             </TouchableOpacity>

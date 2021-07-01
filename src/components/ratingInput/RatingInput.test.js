@@ -16,7 +16,9 @@ describe('Rating input tests', () => {
 
   it('should trigger click callback on click of rating input', () => {
     const mockOnRatingChange = jest.fn();
-    const {queryAllByTestId} = render(<RatingInput config={DEFAULT_CONFIG.rating} onRatingChange={mockOnRatingChange} />);
+    const {queryAllByTestId} = render(
+      <RatingInput config={DEFAULT_CONFIG.rating} onRatingChange={mockOnRatingChange} />,
+    );
 
     const ratingButtons = queryAllByTestId('rating-input-button');
     // rating value of 1

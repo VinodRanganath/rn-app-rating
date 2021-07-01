@@ -6,9 +6,9 @@
   "main": "src/index.js",
   "files": [
     "android",
+    "ios",
     "index.js",
     "rn-app-rating.podspec",
-    "prettier.config.js",
     "src"
   ],
   "scripts": {

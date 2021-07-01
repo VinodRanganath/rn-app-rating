@@ -11,14 +11,18 @@ const Rating = props => {
     <View style={styles.modalContent}>
       <View style={styles.contentSection}>
         <View style={styles.iconContainer}>
-          <Image style={config.iconStyle} source={{uri: config.icon}} />
+          <Image testID="rating-stage-icon" style={config.iconStyle} source={{uri: config.icon}} />
         </View>
         <View style={styles.descriptionContainer}>
           <View style={styles.descriptionTitle}>
-            <Text style={config.titleStyle}>{config.title}</Text>
+            <Text testID="rating-stage-title" style={config.titleStyle}>
+              {config.title}
+            </Text>
           </View>
           <View style={styles.descriptionSubtitle}>
-            <Text style={config.subtitleStyle}>{config.subtitle}</Text>
+            <Text testID="rating-stage-subtitle" style={config.subtitleStyle}>
+              {config.subtitle}
+            </Text>
           </View>
         </View>
         <View style={styles.inputContainer}>
