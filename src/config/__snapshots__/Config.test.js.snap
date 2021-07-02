@@ -77,7 +77,7 @@ Object {
       "marginRight": 5,
       "width": 50,
     },
-    "showRateNever": true,
+    "showRateNever": false,
     "subtitle": "How would you rate your experience so far?",
     "subtitleStyle": Object {
       "textAlign": "center",
@@ -120,7 +120,7 @@ Object {
       "fontWeight": "bold",
       "textTransform": "uppercase",
     },
-    "showRateNever": true,
+    "showRateNever": false,
     "skipStage": false,
     "subtitle": "Would you mind spending a moment to rate us on the store? Thank you.",
     "subtitleStyle": Object {
