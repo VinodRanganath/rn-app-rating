@@ -1,6 +1,6 @@
 import React, {useContext} from 'react';
 import {Modal, View} from 'react-native';
-import {RNAppRatingContext} from '../provider/RNAppRatingContext';
+import {RNAppRatingContext} from '../provider';
 import styles from './styles';
 import AppRating from './appRating/AppRating';
 import {ACTION_EVENT} from '../constants';

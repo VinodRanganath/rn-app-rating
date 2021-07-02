@@ -3,6 +3,7 @@ import RNAppRatingComponent from '../components/RNAppRatingComponent';
 import {RNAppRatingContext} from './RNAppRatingContext';
 import {ACTION_EVENT, FEEDBACK, INITIAL_APP_RATING_RESPONSE, RATING, STORE_RATING_CONFIRMATION} from '../constants';
 import DEFAULT_CONFIG from '../config/Config';
+import useRuleManager from '../hooks/useRuleManager/useRuleManager';
 
 const RNAppRatingProvider = props => {
   const {children} = props;
@@ -12,6 +13,7 @@ const RNAppRatingProvider = props => {
   const [config, setConfig] = useState(DEFAULT_CONFIG);
   const appRatingResponse = useRef(INITIAL_APP_RATING_RESPONSE);
   const journeyCompletionCallback = useRef(initialCallback);
+  const {setRateLater, setRateNever} = useRuleManager();
 
   useEffect(() => {
     if (showRNAppRating) resetState();
@@ -52,6 +54,7 @@ const RNAppRatingProvider = props => {
           rateLater: true,
         };
         setShowRNAppRating(false);
+        setRateLater().then(() => {});
         return;
       case ACTION_EVENT.RATE_NEVER:
         appRatingResponse.current = {
@@ -59,6 +62,7 @@ const RNAppRatingProvider = props => {
           rateNever: true,
         };
         setShowRNAppRating(false);
+        setRateNever().then(() => {});
         return;
       case ACTION_EVENT.CANCEL:
         // TODO: send response
@@ -83,6 +87,8 @@ const RNAppRatingProvider = props => {
     setConfig(tempConfig);
   };
 
+  const loadCustomRules = (customRules = {}) => setConfig({...config, rules: {...config.rules, ...customRules}});
+
   return (
     <RNAppRatingContext.Provider
       value={{
@@ -92,6 +98,7 @@ const RNAppRatingProvider = props => {
         fireActionEvent,
         setJourneyCompletionCallback,
         loadCustomRNAppRatingConfig,
+        loadCustomRules,
         config,
       }}>
       {children}

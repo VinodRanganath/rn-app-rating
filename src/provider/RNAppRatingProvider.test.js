@@ -7,8 +7,10 @@ import {RNAppRatingContext} from './RNAppRatingContext';
 import DEFAULT_CONFIG from '../config/Config';
 
 const mockCallback = jest.fn();
+const mockSetRateLater = jest.fn().mockImplementation(() => Promise.resolve());
+const mockSetRateNever = jest.fn().mockImplementation(() => Promise.resolve());
 const MockConsumerComponent = props => {
-  const {show = false, customConfig = {}, callback = false, event, param} = props;
+  const {show = false, customConfig, customRules, callback = false, event, param} = props;
   const {
     showRNAppRating,
     setShowRNAppRating,
@@ -16,18 +18,18 @@ const MockConsumerComponent = props => {
     fireActionEvent,
     setJourneyCompletionCallback,
     loadCustomRNAppRatingConfig,
+    loadCustomRules,
     config,
   } = useContext(RNAppRatingContext);
+
   useEffect(() => {
     setShowRNAppRating(show);
-    loadCustomRNAppRatingConfig(customConfig);
-    if (event) {
-      fireActionEvent(event, param);
-    }
-    if (callback) {
-      setJourneyCompletionCallback(mockCallback);
-    }
+    if (customConfig) loadCustomRNAppRatingConfig(customConfig);
+    if (customRules) loadCustomRules(customRules);
+    if (event) fireActionEvent(event, param);
+    if (callback) setJourneyCompletionCallback(mockCallback);
   }, []);
+
   return <View testID="mock-component" showRNAppRating={showRNAppRating} stage={stage} config={config} />;
 };
 const MockConsumerWrapper = props => {
@@ -37,6 +39,11 @@ const MockConsumerWrapper = props => {
     </RNAppRatingProvider>
   );
 };
+
+jest.mock('../hooks/useRuleManager/useRuleManager', () => () => ({
+  setRateLater: mockSetRateLater,
+  setRateNever: mockSetRateNever,
+}));
 
 describe('RNAppRatingProvider tests', () => {
   afterEach(() => jest.clearAllMocks());
@@ -94,6 +101,7 @@ describe('RNAppRatingProvider tests', () => {
         ...INITIAL_APP_RATING_RESPONSE,
         rateLater: true,
       });
+      expect(mockSetRateLater).toHaveBeenCalledTimes(1);
     });
 
     it('should invoke custom callback with rateNever=true in response, on journey end, if RATE_NEVER event is fired', () => {
@@ -104,6 +112,7 @@ describe('RNAppRatingProvider tests', () => {
         ...INITIAL_APP_RATING_RESPONSE,
         rateNever: true,
       });
+      expect(mockSetRateNever).toHaveBeenCalledTimes(1);
     });
 
     it('should invoke custom callback, on journey end, if CANCEL event is fired', () => {
@@ -129,6 +138,7 @@ describe('RNAppRatingProvider tests', () => {
       const {getByTestId} = render(<MockConsumerWrapper />);
 
       const consumer = getByTestId('mock-component');
+
       expect(consumer.props.config).toStrictEqual(DEFAULT_CONFIG);
     });
 
@@ -137,9 +147,25 @@ describe('RNAppRatingProvider tests', () => {
       const {getByTestId} = render(<MockConsumerWrapper customConfig={customConfig} />);
 
       const consumer = getByTestId('mock-component');
+
       expect(consumer.props.config).toStrictEqual({
         ...DEFAULT_CONFIG,
         rating: {...DEFAULT_CONFIG.rating, ...customConfig.rating},
+      });
+    });
+
+    it('should load custom rules into config, if set', () => {
+      const customRules = {
+        minimumAppLaunchTimes: 1,
+        minimumAppInstalledDays: 1,
+      };
+
+      const {getByTestId} = render(<MockConsumerWrapper customRules={{...customRules}} />);
+
+      const consumer = getByTestId('mock-component');
+      expect(consumer.props.config).toStrictEqual({
+        ...DEFAULT_CONFIG,
+        rules: {...DEFAULT_CONFIG.rules, ...customRules},
       });
     });
   });

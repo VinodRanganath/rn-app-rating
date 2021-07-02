@@ -17,7 +17,6 @@
   },
   "parser": "babel-eslint",
   "plugins": [
-    "react",
     "react-native"
   ],
   "rules": {
@@ -25,6 +24,7 @@
     "require-jsdoc": "off",
     "react/prop-types": "off",
     "arrow-parens": "off",
-    "indent": "off"
+    "indent": "off",
+    "new-cap": "off"
   }
 }

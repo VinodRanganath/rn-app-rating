@@ -10,6 +10,7 @@ const initialState = {
   setAppRatingResponse: () => {},
   setJourneyCompletionCallback: _ => {},
   loadCustomRNAppRatingConfig: _ => {},
+  loadCustomRules: _ => {},
   config: DEFAULT_CONFIG,
 };
 const RNAppRatingContext = createContext(initialState);

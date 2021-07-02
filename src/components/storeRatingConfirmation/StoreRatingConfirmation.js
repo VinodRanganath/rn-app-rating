@@ -4,7 +4,7 @@ import styles from '../styles';
 import ActionBar from '../actionBar/ActionBar';
 
 const StoreRatingConfirmation = props => {
-  const {config, onPositiveActionPress, onNeutralActionPress, onNegativeActionPress} = props;
+  const {config, showRateNever, onPositiveActionPress, onNeutralActionPress, onNegativeActionPress} = props;
 
   return (
     <View style={styles.modalContent}>
@@ -27,6 +27,7 @@ const StoreRatingConfirmation = props => {
       </View>
       <ActionBar
         config={config}
+        showRateNever={showRateNever}
         onPositiveActionPress={onPositiveActionPress}
         onNeutralActionPress={onNeutralActionPress}
         onNegativeActionPress={onNegativeActionPress}

@@ -1,5 +1,6 @@
 import {
   APP_RATING_PROMPT_ICON,
+  DEFAULT_RULES,
   FEEDBACK_ICON,
   POSITIVE_RATING_THRESHOLD,
   RATING_STAR_ICON,
@@ -20,6 +21,7 @@ const DEFAULT_CONFIG = {
     ratingIcon: RATING_STAR_ICON,
     ratingIconStyle: styles.starRating,
     ratingIconFillStyle: styles.starRatingFill,
+    showRateNever: true,
     positiveButtonText: 'Submit',
     positiveButtonTextStyle: styles.positiveActionText,
     neutralButtonText: 'Rate Later',
@@ -54,6 +56,7 @@ const DEFAULT_CONFIG = {
     titleStyle: styles.descriptionTitleText,
     subtitle: 'Would you mind spending a moment to rate us on the store? Thank you.',
     subtitleStyle: styles.descriptionSubtitleText,
+    showRateNever: true,
     positiveButtonText: 'Rate Now',
     positiveButtonTextStyle: styles.positiveActionText,
     neutralButtonText: 'Rate Later',
@@ -61,6 +64,7 @@ const DEFAULT_CONFIG = {
     negativeButtonText: 'Never',
     negativeButtonTextStyle: styles.negativeActionText,
   },
+  rules: DEFAULT_RULES,
 };
 
 export default DEFAULT_CONFIG;

@@ -1,7 +1,7 @@
 {
   "name": "rn-app-rating",
   "title": "Rn App Rating",
-  "version": "0.0.2-alpha",
+  "version": "0.0.3-alpha",
   "description": "TODO",
   "main": "src/index.js",
   "files": [
@@ -49,18 +49,21 @@
     "react-native": ">=0.60.0"
   },
   "devDependencies": {
-    "@testing-library/react-hooks": "^7.0.0",
-    "@testing-library/react-native": "^7.2.0",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^7.29.0",
-    "eslint-config-google": "^0.14.0",
-    "eslint-plugin-react": "^7.24.0",
-    "eslint-plugin-react-native": "^3.11.0",
+    "@testing-library/react-hooks": "7.0.0",
+    "@testing-library/react-native": "7.2.0",
+    "babel-eslint": "10.1.0",
+    "eslint": "7.29.0",
+    "eslint-config-google": "0.14.0",
+    "eslint-plugin-react-native": "3.11.0",
     "jest": "26.6.3",
-    "metro-react-native-babel-preset": "^0.66.0",
-    "prettier": "^2.3.1",
-    "react": "^17.0.2",
-    "react-native": "^0.64.2",
-    "react-test-renderer": "^17.0.2"
+    "metro-react-native-babel-preset": "0.66.0",
+    "prettier": "2.3.1",
+    "react": "17.0.2",
+    "react-native": "0.64.2",
+    "react-test-renderer": "17.0.2"
+  },
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "1.13.3",
+    "moment": "2.29.1"
   }
 }

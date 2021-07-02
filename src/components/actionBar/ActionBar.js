@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 import styles from '../styles';
-import {RNAppRatingContext} from '../../provider/RNAppRatingContext';
+import {RNAppRatingContext} from '../../provider';
 import {FEEDBACK, RATING, STORE_RATING_CONFIRMATION} from '../../constants';
 
 const ActionBar = props => {

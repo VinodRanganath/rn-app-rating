@@ -5,7 +5,15 @@ import ActionBar from '../actionBar/ActionBar';
 import RatingInput from '../ratingInput/RatingInput';
 
 const Rating = props => {
-  const {config, rating, onRatingChange, onPositiveActionPress, onNeutralActionPress, onNegativeActionPress} = props;
+  const {
+    config,
+    rating,
+    showRateNever,
+    onRatingChange,
+    onPositiveActionPress,
+    onNeutralActionPress,
+    onNegativeActionPress,
+  } = props;
 
   return (
     <View style={styles.modalContent}>
@@ -31,6 +39,7 @@ const Rating = props => {
       </View>
       <ActionBar
         config={config}
+        showRateNever={showRateNever}
         onPositiveActionPress={onPositiveActionPress}
         onNeutralActionPress={onNeutralActionPress}
         onNegativeActionPress={onNegativeActionPress}

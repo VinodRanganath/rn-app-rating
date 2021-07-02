@@ -31,6 +31,17 @@ describe('Store rating confirmation tests', () => {
     expect(storeRatingConfirmationSubtitle.props.children).toBe(storeRatingConfirmationConfig.subtitle);
     // action bar
     expect(actionBar).toBeDefined();
+    expect(actionBar.props.showRateNever).toBeFalsy();
+  });
+
+  it('should set showRateNever=true in action bar if showRateNever prop is true', () => {
+    const {storeRatingConfirmation: storeRatingConfirmationConfig} = DEFAULT_CONFIG;
+
+    const {getByTestId} = render(<StoreRatingConfirmation config={storeRatingConfirmationConfig} showRateNever />);
+
+    const actionBar = getByTestId('action-bar');
+    expect(actionBar).toBeDefined();
+    expect(actionBar.props.showRateNever).toBeTruthy();
   });
 
   it('should render rating stage with rating and callbacks properly assigned and called', () => {

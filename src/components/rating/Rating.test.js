@@ -36,6 +36,18 @@ describe('Rating tests', () => {
     expect(ratingInput).toBeDefined();
     // action bar
     expect(actionBar).toBeDefined();
+    expect(actionBar.props.showRateNever).toBeFalsy();
+  });
+
+  it('should set showRateNever=true in action bar if showRateNever prop is true', async () => {
+    const {rating: ratingConfig} = DEFAULT_CONFIG;
+
+    const {getByTestId} = render(<Rating config={ratingConfig} showRateNever />);
+
+    const actionBar = getByTestId('action-bar');
+
+    expect(actionBar).toBeDefined();
+    expect(actionBar.props.showRateNever).toBeTruthy();
   });
 
   it('should render rating stage with rating and callbacks properly assigned and called', () => {

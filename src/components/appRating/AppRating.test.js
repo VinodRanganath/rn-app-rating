@@ -1,6 +1,6 @@
 import React from 'react';
 import {View} from 'react-native';
-import {RNAppRatingContext} from '../../provider/RNAppRatingContext';
+import {RNAppRatingContext} from '../../provider';
 import DEFAULT_CONFIG from '../../config/Config';
 import AppRating from './AppRating';
 import {ACTION_EVENT, FEEDBACK, RATING, STORE_RATING_CONFIRMATION} from '../../constants';
@@ -34,6 +34,24 @@ describe('App rating tests', () => {
       const ratingStage = getByTestId('rating-stage');
       expect(ratingStage.props.config).toStrictEqual(DEFAULT_CONFIG.rating);
       expect(ratingStage.props.rating).toBe(0);
+    });
+
+    it('should set showRateNever=true if showRateNever is enabled in config', () => {
+      const config = {...DEFAULT_CONFIG, rating: {...DEFAULT_CONFIG.rating, showRateNever: true}};
+
+      const {getByTestId} = render(<AppRatingWrapper customConfig={config} />);
+
+      const ratingStage = getByTestId('rating-stage');
+      expect(ratingStage.props.showRateNever).toBeTruthy();
+    });
+
+    it('should set showRateNever=false if showRateNever is disabled in config', () => {
+      const config = {...DEFAULT_CONFIG, rating: {...DEFAULT_CONFIG.rating, showRateNever: false}};
+
+      const {getByTestId} = render(<AppRatingWrapper customConfig={config} />);
+
+      const ratingStage = getByTestId('rating-stage');
+      expect(ratingStage.props.showRateNever).toBeFalsy();
     });
 
     it('should call appropriate callbacks and update states accordingly', () => {
@@ -121,6 +139,30 @@ describe('App rating tests', () => {
 
       const storeRatingConfirmationStage = getByTestId('store-rating-confirmation-stage');
       expect(storeRatingConfirmationStage.props.config).toStrictEqual(DEFAULT_CONFIG.storeRatingConfirmation);
+    });
+
+    it('should set showRateNever=true if showRateNever is enabled in config', () => {
+      const config = {
+        ...DEFAULT_CONFIG,
+        storeRatingConfirmation: {...DEFAULT_CONFIG.storeRatingConfirmation, showRateNever: true},
+      };
+
+      const {getByTestId} = render(<AppRatingWrapper stage={STORE_RATING_CONFIRMATION} customConfig={config} />);
+
+      const storeRatingConfirmationStage = getByTestId('store-rating-confirmation-stage');
+      expect(storeRatingConfirmationStage.props.showRateNever).toBeTruthy();
+    });
+
+    it('should set showRateNever=false if showRateNever is disabled in config', () => {
+      const config = {
+        ...DEFAULT_CONFIG,
+        storeRatingConfirmation: {...DEFAULT_CONFIG.storeRatingConfirmation, showRateNever: false},
+      };
+
+      const {getByTestId} = render(<AppRatingWrapper stage={STORE_RATING_CONFIRMATION} customConfig={config} />);
+
+      const storeRatingConfirmationStage = getByTestId('store-rating-confirmation-stage');
+      expect(storeRatingConfirmationStage.props.showRateNever).toBeFalsy();
     });
 
     it('should call appropriate callbacks and update states accordingly', () => {
