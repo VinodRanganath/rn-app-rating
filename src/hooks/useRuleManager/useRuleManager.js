@@ -14,7 +14,10 @@ const useRuleManager = () => {
 
   const setRNAppRatingStorageValue = value => saveInStorage(RN_APP_RATING_STORAGE_KEY, value);
 
-  const daysElapsed = sinceTimestamp => moment.duration(moment().diff(moment(sinceTimestamp))).days();
+  const daysElapsed = sinceTimestamp => {
+    if (moment(sinceTimestamp).isAfter(moment())) return -1;
+    return moment.duration(moment().diff(moment(sinceTimestamp))).days();
+  };
 
   const initRNAppRatingStorage = async () => {
     let storageValue = await getRNAppRatingStorageValue();
@@ -57,11 +60,11 @@ const useRuleManager = () => {
     let ruleBroken = false;
 
     if (!rateNever) {
-      if (minimumAppLaunchTimes < launchTimes || minimumAppInstalledDays < daysElapsed(installedOn)) ruleBroken = true;
+      if (launchTimes < minimumAppLaunchTimes || daysElapsed(installedOn) < minimumAppInstalledDays) ruleBroken = true;
       if (
         rateLater &&
-        (minimumAppLaunchTimesPostRateLater < launchTimesPostRateLater ||
-          minimumAppInstalledDaysPostRateLater < daysElapsed(rateLaterOn))
+        (launchTimesPostRateLater < minimumAppLaunchTimesPostRateLater ||
+          daysElapsed(rateLaterOn) < minimumAppInstalledDaysPostRateLater)
       ) {
         ruleBroken = true;
       }

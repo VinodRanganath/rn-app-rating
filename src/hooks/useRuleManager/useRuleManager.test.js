@@ -114,7 +114,129 @@ describe('useRuleManager tests', () => {
     });
   });
 
-  describe('validateRules', () => {});
+  describe('validateRules', () => {
+    const yesterday = moment().subtract(1, 'day').utc().valueOf();
+    const today = moment().utc().valueOf();
+
+    it('should validate to true if all rules are satisfied, when rateLater=false', async () => {
+      const storageValue = {
+        launchTimes: 1,
+        installedOn: yesterday,
+        rateLater: false,
+      };
+      mockGetFromStorage.mockImplementation(() => Promise.resolve(storageValue));
+
+      const {result} = renderHook(useRuleManager, {wrapper});
+
+      const res = await result.current.validateRules();
+
+      expect(mockGetFromStorage).toHaveBeenCalledTimes(1);
+      expect(mockGetFromStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY);
+      expect(res).toBeTruthy();
+    });
+
+    it('should validate to true if all rules are satisfied, when rateLater=true', async () => {
+      const storageValue = {
+        launchTimes: 1,
+        installedOn: yesterday,
+        rateLater: true,
+        launchTimesPostRateLater: 1,
+        rateLaterOn: yesterday,
+      };
+      mockGetFromStorage.mockImplementation(() => Promise.resolve(storageValue));
+
+      const {result} = renderHook(useRuleManager, {wrapper});
+
+      const res = await result.current.validateRules();
+
+      expect(mockGetFromStorage).toHaveBeenCalledTimes(1);
+      expect(mockGetFromStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY);
+      expect(res).toBeTruthy();
+    });
+
+    it('should validate to false if launch times < minimumAppLaunchTimes', async () => {
+      const storageValue = {
+        launchTimes: 0,
+      };
+      mockGetFromStorage.mockImplementation(() => Promise.resolve(storageValue));
+
+      const {result} = renderHook(useRuleManager, {wrapper});
+
+      const res = await result.current.validateRules();
+
+      expect(mockGetFromStorage).toHaveBeenCalledTimes(1);
+      expect(mockGetFromStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY);
+      expect(res).toBeFalsy();
+    });
+
+    it('should validate to false if days expired post install < minimumAppInstalledDays', async () => {
+      const storageValue = {
+        launchTimes: 1,
+        installedOn: today,
+      };
+      mockGetFromStorage.mockImplementation(() => Promise.resolve(storageValue));
+
+      const {result} = renderHook(useRuleManager, {wrapper});
+
+      const res = await result.current.validateRules();
+
+      expect(mockGetFromStorage).toHaveBeenCalledTimes(1);
+      expect(mockGetFromStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY);
+      expect(res).toBeFalsy();
+    });
+
+    it('should validate to false if launch times < minimumAppLaunchTimesPostRateLater, when rateLater=true', async () => {
+      const storageValue = {
+        launchTimes: 1,
+        installedOn: yesterday,
+        rateLater: true,
+        launchTimesPostRateLater: 0,
+      };
+      mockGetFromStorage.mockImplementation(() => Promise.resolve(storageValue));
+
+      const {result} = renderHook(useRuleManager, {wrapper});
+
+      const res = await result.current.validateRules();
+
+      expect(mockGetFromStorage).toHaveBeenCalledTimes(1);
+      expect(mockGetFromStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY);
+      expect(res).toBeFalsy();
+    });
+
+    it('should validate to false if days expired post rate later < minimumAppInstalledDaysPostRateLater, when rateLater=true', async () => {
+      const storageValue = {
+        launchTimes: 1,
+        installedOn: yesterday,
+        rateLater: true,
+        launchTimesPostRateLater: 1,
+        rateLaterOn: today,
+      };
+      mockGetFromStorage.mockImplementation(() => Promise.resolve(storageValue));
+
+      const {result} = renderHook(useRuleManager, {wrapper});
+
+      const res = await result.current.validateRules();
+
+      expect(mockGetFromStorage).toHaveBeenCalledTimes(1);
+      expect(mockGetFromStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY);
+      expect(res).toBeFalsy();
+    });
+
+    it('should validate to false, when rateNever=true', async () => {
+      const storageValue = {
+        rateNever: true,
+      };
+      mockGetFromStorage.mockImplementation(() => Promise.resolve(storageValue));
+
+      const {result} = renderHook(useRuleManager, {wrapper});
+
+      const res = await result.current.validateRules();
+
+      expect(mockGetFromStorage).toHaveBeenCalledTimes(1);
+      expect(mockGetFromStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY);
+      expect(res).toBeFalsy();
+    });
+  });
 
   describe('setRateLater', () => {
     it('should set rateLater=true, rateLaterOn and increment rateLaterClicks', async () => {
