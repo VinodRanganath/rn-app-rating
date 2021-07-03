@@ -238,6 +238,18 @@ describe('useRuleManager tests', () => {
       expect(mockGetFromStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY);
       expect(res).toBeFalsy();
     });
+
+    it('should validate to true if initialisation was not done and storage value is null', async () => {
+      mockGetFromStorage.mockImplementation(() => Promise.resolve());
+
+      const {result} = renderHook(useRuleManager, {wrapper});
+
+      const res = await result.current.validateRules();
+
+      expect(mockGetFromStorage).toHaveBeenCalledTimes(1);
+      expect(mockGetFromStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY);
+      expect(res).toBeFalsy();
+    });
   });
 
   describe('setRateLater', () => {

@@ -50,29 +50,33 @@ const useRuleManager = () => {
 
   const validateRules = async () => {
     const storageValue = await getRNAppRatingStorageValue();
-    const {launchTimes, installedOn, rateLater, launchTimesPostRateLater, rateLaterOn, rateNever} = storageValue;
-    const {
-      minimumAppLaunchTimes,
-      minimumAppInstalledDays,
-      minimumAppLaunchTimesPostRateLater,
-      minimumAppInstalledDaysPostRateLater,
-    } = rules;
-    let ruleBroken = false;
+    if (storageValue) {
+      const {launchTimes, installedOn, rateLater, launchTimesPostRateLater, rateLaterOn, rateNever} = storageValue;
+      const {
+        minimumAppLaunchTimes,
+        minimumAppInstalledDays,
+        minimumAppLaunchTimesPostRateLater,
+        minimumAppInstalledDaysPostRateLater,
+      } = rules;
+      let ruleBroken = false;
 
-    if (!rateNever) {
-      if (launchTimes < minimumAppLaunchTimes || daysElapsed(installedOn) < minimumAppInstalledDays) ruleBroken = true;
-      if (
-        rateLater &&
-        (launchTimesPostRateLater < minimumAppLaunchTimesPostRateLater ||
-          daysElapsed(rateLaterOn) < minimumAppInstalledDaysPostRateLater)
-      ) {
+      if (!rateNever) {
+        if (launchTimes < minimumAppLaunchTimes || daysElapsed(installedOn) < minimumAppInstalledDays)
+          ruleBroken = true;
+        if (
+          rateLater &&
+          (launchTimesPostRateLater < minimumAppLaunchTimesPostRateLater ||
+            daysElapsed(rateLaterOn) < minimumAppInstalledDaysPostRateLater)
+        ) {
+          ruleBroken = true;
+        }
+      } else {
         ruleBroken = true;
       }
-    } else {
-      ruleBroken = true;
-    }
 
-    return !ruleBroken;
+      return !ruleBroken;
+    }
+    return false;
   };
 
   const setRateLater = async () => {
