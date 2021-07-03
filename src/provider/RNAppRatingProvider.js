@@ -42,10 +42,10 @@ const RNAppRatingProvider = props => {
           } else setStage(FEEDBACK);
           return;
         } else {
-          setShowRNAppRating(false);
           if (stage === STORE_RATING_CONFIRMATION) {
             // TODO: open native in-app rating popup
           }
+          setShowRNAppRating(false);
         }
         return;
       case ACTION_EVENT.RATE_LATER:

@@ -68,7 +68,7 @@ describe('App rating tests', () => {
       // positive button press with rating value
       fireEvent(ratingStage, 'onPositiveActionPress');
       expect(mockFireActionEvent).toHaveBeenCalledTimes(1);
-      expect(mockFireActionEvent).toHaveBeenNthCalledWith(1, ACTION_EVENT.SUBMIT, {rating: 3});
+      expect(mockFireActionEvent).toHaveBeenNthCalledWith(1, ACTION_EVENT.SUBMIT, {rating: 3, storeRating: false});
       // neutral button press
       fireEvent(ratingStage, 'onNeutralActionPress');
       expect(mockFireActionEvent).toHaveBeenCalledTimes(2);

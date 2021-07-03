@@ -10,7 +10,7 @@ const mockCallback = jest.fn();
 const mockSetRateLater = jest.fn().mockImplementation(() => Promise.resolve());
 const mockSetRateNever = jest.fn().mockImplementation(() => Promise.resolve());
 const MockConsumerComponent = props => {
-  const {show = false, customConfig, customRules, callback = false, event, param} = props;
+  const {show, customConfig, customRules, callback, event, param} = props;
   const {
     showRNAppRating,
     setShowRNAppRating,
@@ -72,21 +72,21 @@ describe('RNAppRatingProvider tests', () => {
       expect(consumer.props.stage).toStrictEqual(RATING);
     });
 
-    it('should provide stage value, to consumer component, as FEEDBACK if SUBMIT event is fired with rating less than threshold', () => {
+    it('should provide stage value, to consumer component, as FEEDBACK if SUBMIT event is fired, in RATING stage, with rating less than threshold', () => {
       const {getByTestId} = render(<MockConsumerWrapper event={ACTION_EVENT.SUBMIT} param={{rating: 2}} callback />);
 
       const consumer = getByTestId('mock-component');
       expect(consumer.props.stage).toStrictEqual(FEEDBACK);
     });
 
-    it('should provide stage value, to consumer component, as STORE_RATING_CONFIRMATION if SUBMIT event is fired with rating equal to threshold', () => {
+    it('should provide stage value, to consumer component, as STORE_RATING_CONFIRMATION if SUBMIT event is fired, in RATING stage, with rating equal to threshold', () => {
       const {getByTestId} = render(<MockConsumerWrapper event={ACTION_EVENT.SUBMIT} param={{rating: 4}} />);
 
       const consumer = getByTestId('mock-component');
       expect(consumer.props.stage).toStrictEqual(STORE_RATING_CONFIRMATION);
     });
 
-    it('should provide stage value, to consumer component, as STORE_RATING_CONFIRMATION if SUBMIT event is fired with rating greater than threshold', () => {
+    it('should provide stage value, to consumer component, as STORE_RATING_CONFIRMATION if SUBMIT event is fired, in RATING stage, with rating greater than threshold', () => {
       const {getByTestId} = render(<MockConsumerWrapper event={ACTION_EVENT.SUBMIT} param={{rating: 4}} />);
 
       const consumer = getByTestId('mock-component');

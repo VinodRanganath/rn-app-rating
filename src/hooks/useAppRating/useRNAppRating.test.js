@@ -51,14 +51,14 @@ describe('RNAppRating tests', () => {
     });
   });
 
-  describe('showRNAppRatingPrompt', () => {
+  describe('showRNAppRating', () => {
     it('should set showRNAppRating=true, load custom config and set journey completion callback, when showRNAppRatingPrompt is called and rules are satisfied', async () => {
       const customCallback = jest.fn();
       const customConfig = {};
       mockValidateRules.mockReturnValue(true);
 
       const {result} = renderHook(useRNAppRating, {wrapper});
-      const res = await result.current.showRNAppRatingPrompt(customCallback, customConfig);
+      const res = await result.current.showRNAppRating(customCallback, customConfig);
 
       expect(res).toBeTruthy();
       expect(mockSetShowRNAppRating).toHaveBeenCalledTimes(1);
@@ -73,7 +73,7 @@ describe('RNAppRating tests', () => {
       mockValidateRules.mockReturnValue(false);
 
       const {result} = renderHook(useRNAppRating, {wrapper});
-      const res = await result.current.showRNAppRatingPrompt();
+      const res = await result.current.showRNAppRating();
 
       expect(res).toBeFalsy();
       expect(mockSetShowRNAppRating).toHaveBeenCalledTimes(0);
@@ -82,10 +82,10 @@ describe('RNAppRating tests', () => {
     });
   });
 
-  describe('hideRNAppRatingPrompt', () => {
+  describe('hideRNAppRating', () => {
     it('should set showRNAppRating=false when hideRNAppRatingPrompt is called', () => {
       const {result} = renderHook(useRNAppRating, {wrapper});
-      result.current.hideRNAppRatingPrompt();
+      result.current.hideRNAppRating();
 
       expect(mockSetShowRNAppRating).toHaveBeenCalledTimes(1);
       expect(mockSetShowRNAppRating).toHaveBeenNthCalledWith(1, false);

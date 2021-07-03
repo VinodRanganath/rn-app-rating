@@ -34,7 +34,7 @@ const Feedback = props => {
               {config.title}
             </Text>
           </View>
-          {config.subtitle && (
+          {config.subtitle?.length > 0 && (
             <View testID="feedback-stage-subtitle-wrapper" style={styles.descriptionSubtitle}>
               <Text testID="feedback-stage-subtitle" style={config.subtitleStyle}>
                 {config.subtitle}

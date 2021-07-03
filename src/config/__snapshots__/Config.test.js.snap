@@ -24,14 +24,13 @@ Object {
       "fontWeight": "bold",
       "textTransform": "uppercase",
     },
-    "neutralButtonText": "",
-    "neutralButtonTextStyle": Object {},
     "positiveButtonText": "Submit",
     "positiveButtonTextStyle": Object {
       "color": "#4D908E",
       "fontWeight": "bold",
       "textTransform": "uppercase",
     },
+    "subtitle": "",
     "subtitleStyle": Object {
       "textAlign": "center",
     },

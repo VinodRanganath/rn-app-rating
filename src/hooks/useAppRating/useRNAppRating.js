@@ -17,7 +17,7 @@ const useRNAppRating = () => {
     return initRNAppRatingStorage();
   };
 
-  const showRNAppRatingPrompt = async (journeyCompletionCallback, customConfig) => {
+  const showRNAppRating = async (journeyCompletionCallback, customConfig) => {
     const rulesSatisfied = await validateRules();
     if (rulesSatisfied) {
       loadCustomRNAppRatingConfig(customConfig);
@@ -27,7 +27,7 @@ const useRNAppRating = () => {
     return rulesSatisfied;
   };
 
-  const hideRNAppRatingPrompt = () => setShowRNAppRating(false);
+  const hideRNAppRating = () => setShowRNAppRating(false);
 
   const triggerActionEvent = (actionEvent, param) => fireActionEvent(actionEvent, param);
 
@@ -35,8 +35,8 @@ const useRNAppRating = () => {
 
   return {
     initRNAppRating,
-    showRNAppRatingPrompt,
-    hideRNAppRatingPrompt,
+    showRNAppRating,
+    hideRNAppRating,
     triggerActionEvent,
     shouldShowRateNever,
   };
