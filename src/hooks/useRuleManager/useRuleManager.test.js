@@ -71,14 +71,16 @@ describe('useRuleManager tests', () => {
     });
 
     it('should update launch times, launchTimesPostRateLater and store value, if value is already present and rateLater=true', async () => {
+      const today = moment().utc().valueOf();
       const updatedValue = {
         ...INITIAL_RN_APP_RATING_STORAGE_VALUE,
         launchTimes: INITIAL_RN_APP_RATING_STORAGE_VALUE.launchTimes + 1,
         launchTimesPostRateLater: INITIAL_RN_APP_RATING_STORAGE_VALUE.launchTimesPostRateLater + 1,
         rateLater: true,
+        rateLaterOn: today,
       };
       mockGetFromStorage.mockImplementation(() =>
-        Promise.resolve({...INITIAL_RN_APP_RATING_STORAGE_VALUE, rateLater: true}),
+        Promise.resolve({...INITIAL_RN_APP_RATING_STORAGE_VALUE, rateLater: true, rateLaterOn: today}),
       );
 
       const {result} = renderHook(useRuleManager, {wrapper});
