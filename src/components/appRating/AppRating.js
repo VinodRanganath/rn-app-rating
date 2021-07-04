@@ -23,10 +23,7 @@ const AppRating = () => {
       showRateNever={ratingConfig.showRateNever}
       rating={rating}
       onRatingChange={ratingValue => setRating(ratingValue)}
-      onPositiveActionPress={() =>
-        rating > 0 &&
-        fireActionEvent(ACTION_EVENT.SUBMIT, {rating, storeRating: storeRatingConfirmationConfig.skipStage})
-      }
+      onPositiveActionPress={() => rating > 0 && fireActionEvent(ACTION_EVENT.SUBMIT, {rating})}
       onNeutralActionPress={() => fireActionEvent(ACTION_EVENT.RATE_LATER)}
       onNegativeActionPress={() => fireActionEvent(ACTION_EVENT.RATE_NEVER)}
     />
@@ -48,7 +45,7 @@ const AppRating = () => {
     <StoreRatingConfirmation
       config={storeRatingConfirmationConfig}
       showRateNever={storeRatingConfirmationConfig.showRateNever}
-      onPositiveActionPress={() => fireActionEvent(ACTION_EVENT.SUBMIT, {storeRating: true})}
+      onPositiveActionPress={() => fireActionEvent(ACTION_EVENT.SUBMIT)}
       onNeutralActionPress={() => fireActionEvent(ACTION_EVENT.RATE_LATER)}
       onNegativeActionPress={() => fireActionEvent(ACTION_EVENT.RATE_NEVER)}
     />

@@ -34,6 +34,10 @@ const RNAppRatingProvider = props => {
         if (stage === RATING) {
           if (param?.rating >= config.rating.positiveRatingThreshold) {
             if (config.storeRatingConfirmation.skipStage) {
+              appRatingResponse.current = {
+                ...appRatingResponse.current,
+                storeRating: true,
+              };
               setShowRNAppRating(false);
               // TODO: open native in-app rating popup
               return;
@@ -43,6 +47,10 @@ const RNAppRatingProvider = props => {
           return;
         } else {
           if (stage === STORE_RATING_CONFIRMATION) {
+            appRatingResponse.current = {
+              ...appRatingResponse.current,
+              storeRating: true,
+            };
             // TODO: open native in-app rating popup
           }
           setShowRNAppRating(false);
