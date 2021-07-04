@@ -58,7 +58,7 @@ const initResponse = await initRNAppRating(rules);
 const showResponse = await showRNAppRating(callback, config);
 ```
 
-###Hide
+### Hide
 Manually hide rating popup. Use this method to hide the popup based on any external conditions
 you'd like to handle.
 
@@ -80,7 +80,7 @@ Note: Popup hide event will be taken care of by the **showRNAppRating**
 method, at the end of a rating journey.
 ```
 
-###Show Rate Never Validation
+### Show Rate Never Validation
 This method returns a boolean indicating whether to show the rate never button or not
 for this app launch session. The check is made by considering the number of times the
 rate later button has been clicked. The rate later click threshold can be configured
@@ -102,7 +102,7 @@ const showRateNever = await shouldShowRateNever();
 Note: In order to show rate never button showRateNever has to be set in custom config.
 ```
 ## Configurations
-###Rules
+### Rules
 Rules are a set of conditions that need to be satisfied in order to show the
 RNAppRating popup.\
 By default, RNAppRating will use the following default set of rule configurations for
@@ -128,7 +128,7 @@ rule validation.
 
 `minimumRateLaterClicksToShowRateNever` Minimum rate later clicks required to show rate never option
 
-###Custom rules
+### Custom rules
 Custom rules can be configured by passing them to **initRNAppRating** at the time of initialisation.
 
 ```javascript
@@ -149,7 +149,7 @@ When using custom rules, all default rule values must be overwritten.
 Any rule that is not overriden will take it's value from the default configuration.
 ```
 
-###Stages
+### Stages
 There are 3 stages provided by the RNAppRating flow,
 1. Rating
 2. Feedback
@@ -182,7 +182,7 @@ The way these stages are handled can be seen below,
 | Store Rating Confirmation | Rate now | close with callback and open native in-app rating dialog | rating={value}, storeRating=true |
 | Store Rating Confirmation | Rate later | close with callback | rating={value}, storeRating=false |
 
-####Design Customisations
+#### Design Customisations
 The default designs of the RNAppRating popup can be modified by passing them as a config,
 to **showRNAppRating**, at the time of showing.
 
@@ -307,7 +307,7 @@ type config = {
 };
 ```
 
-####Custom Components
+#### Custom Components
 While using custom components, passed via custom configuration, the stage transitions
 need to be handled via **triggerActionEvent** provided by the **useRNAppRating** hook.
 
