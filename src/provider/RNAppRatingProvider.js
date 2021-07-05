@@ -9,6 +9,8 @@ const RNAppRatingProvider = props => {
   const {children} = props;
   const initialCallback = _ => {};
   const [showRNAppRating, setShowRNAppRating] = useState(false);
+  // TODO: Extract stage to it's own factory which would handle stage specific updates and transitions
+  // TODO: Add a thank you stage
   const [stage, setStage] = useState(RATING);
   const [config, setConfig] = useState(DEFAULT_CONFIG);
   const appRatingResponse = useRef(INITIAL_APP_RATING_RESPONSE);
@@ -27,6 +29,7 @@ const RNAppRatingProvider = props => {
     appRatingResponse.current = INITIAL_APP_RATING_RESPONSE;
   };
 
+  // TODO: Do not show app rating popup again, if journey has completed with a rating and feedback
   const fireActionEvent = (actionEvent, param = {}) => {
     switch (actionEvent) {
       case ACTION_EVENT.SUBMIT:

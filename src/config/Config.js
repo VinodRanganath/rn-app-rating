@@ -8,6 +8,7 @@ import {
 } from '../constants';
 import styles from '../components/styles';
 
+// TODO: Rename icon to iconInBase64
 const DEFAULT_CONFIG = {
   rating: {
     component: null,

@@ -36,6 +36,9 @@ const INITIAL_RN_APP_RATING_STORAGE_VALUE = {
 };
 
 // rules
+// TODO: Rename minimumAppLaunchTimes to minimumAppLaunches
+// TODO: Rename minimumAppLaunchTimesPostRateLater to minimumAppLaunchesSinceRateLater
+// TODO: Rename minimumAppInstalledDaysPostRateLater to minimumDaysSinceRateLater
 const DEFAULT_RULES = {
   minimumAppLaunchTimes: 7,
   minimumAppInstalledDays: 5,
@@ -51,7 +54,9 @@ const RATING_VALUE = {
   FOUR: 4,
   FIVE: 5,
 };
+// TODO: POSITIVE_RATING_THRESHOLD to be len(RATING_VALUE) - 1, by default
 const POSITIVE_RATING_THRESHOLD = 4;
+// TODO: Rename storeRating to optedForStoreRating
 const INITIAL_APP_RATING_RESPONSE = {
   rating: 0,
   feedback: '',

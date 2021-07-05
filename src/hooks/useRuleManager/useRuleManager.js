@@ -19,6 +19,7 @@ const useRuleManager = () => {
     return moment.duration(moment().diff(moment(sinceTimestamp))).days();
   };
 
+  // TODO: Set rateLaterOn to null when resetting
   const initRNAppRatingStorage = async () => {
     let storageValue = await getRNAppRatingStorageValue();
 
@@ -48,6 +49,8 @@ const useRuleManager = () => {
     return storageValue;
   };
 
+  // TODO: Rename validateRules to rulesSatisfied
+  // TODO: Refactor method
   const validateRules = async () => {
     const storageValue = await getRNAppRatingStorageValue();
     if (storageValue) {
@@ -61,8 +64,9 @@ const useRuleManager = () => {
       let ruleBroken = false;
 
       if (!rateNever) {
-        if (launchTimes < minimumAppLaunchTimes || daysElapsed(installedOn) < minimumAppInstalledDays)
+        if (launchTimes < minimumAppLaunchTimes || daysElapsed(installedOn) < minimumAppInstalledDays) {
           ruleBroken = true;
+        }
         if (
           rateLater &&
           (launchTimesPostRateLater < minimumAppLaunchTimesPostRateLater ||
@@ -96,6 +100,7 @@ const useRuleManager = () => {
     await setRNAppRatingStorageValue(storageValue);
   };
 
+  // TODO: Rename validateShowRateNever to canShowRateNever
   const validateShowRateNever = async () => {
     const storageValue = await getRNAppRatingStorageValue();
     return storageValue.rateLaterClicks >= rules.minimumRateLaterClicksToShowRateNever;

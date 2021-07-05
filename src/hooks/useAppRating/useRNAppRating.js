@@ -18,6 +18,7 @@ const useRNAppRating = () => {
   };
 
   const showRNAppRating = async (journeyCompletionCallback, customConfig) => {
+    // TODO: Introduce debug mode and enable logs
     const rulesSatisfied = await validateRules();
     if (rulesSatisfied) {
       loadCustomRNAppRatingConfig(customConfig);
