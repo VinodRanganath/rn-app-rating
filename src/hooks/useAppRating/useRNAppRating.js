@@ -10,7 +10,7 @@ const useRNAppRating = () => {
     loadCustomRNAppRatingConfig,
     loadCustomRules,
   } = useContext(RNAppRatingContext);
-  const {initRNAppRatingStorage, validateRules, validateShowRateNever} = useRuleManager();
+  const {initRNAppRatingStorage, validateRules, canShowRateNever} = useRuleManager();
 
   const initRNAppRating = customRules => {
     loadCustomRules(customRules);
@@ -32,7 +32,7 @@ const useRNAppRating = () => {
 
   const triggerActionEvent = (actionEvent, param) => fireActionEvent(actionEvent, param);
 
-  const shouldShowRateNever = () => validateShowRateNever();
+  const shouldShowRateNever = () => canShowRateNever();
 
   return {
     initRNAppRating,

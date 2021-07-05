@@ -30,20 +30,17 @@ const INITIAL_RN_APP_RATING_STORAGE_VALUE = {
   installedOn: moment.utc().valueOf(),
   rateLater: false,
   launchTimesPostRateLater: 0,
-  rateLaterOn: 0,
+  rateLaterOn: null,
   rateLaterClicks: 0,
   rateNever: false,
 };
 
 // rules
-// TODO: Rename minimumAppLaunchTimes to minimumAppLaunches
-// TODO: Rename minimumAppLaunchTimesPostRateLater to minimumAppLaunchesSinceRateLater
-// TODO: Rename minimumAppInstalledDaysPostRateLater to minimumDaysSinceRateLater
 const DEFAULT_RULES = {
-  minimumAppLaunchTimes: 7,
+  minimumAppLaunches: 7,
   minimumAppInstalledDays: 5,
-  minimumAppLaunchTimesPostRateLater: 5,
-  minimumAppInstalledDaysPostRateLater: 3,
+  minimumAppLaunchesSinceRateLater: 5,
+  minimumDaysSinceRateLater: 3,
   minimumRateLaterClicksToShowRateNever: 3,
 };
 
@@ -54,13 +51,11 @@ const RATING_VALUE = {
   FOUR: 4,
   FIVE: 5,
 };
-// TODO: POSITIVE_RATING_THRESHOLD to be len(RATING_VALUE) - 1, by default
-const POSITIVE_RATING_THRESHOLD = 4;
-// TODO: Rename storeRating to optedForStoreRating
+const POSITIVE_RATING_THRESHOLD = Object.keys(RATING_VALUE).length - 1;
 const INITIAL_APP_RATING_RESPONSE = {
   rating: 0,
   feedback: '',
-  storeRating: false,
+  optedForStoreRating: false,
   rateLater: false,
   rateNever: false,
   journeyCancelled: false,

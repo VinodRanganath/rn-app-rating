@@ -19,7 +19,7 @@ const Rating = props => {
     <View style={styles.modalContent}>
       <View style={styles.contentSection}>
         <View style={styles.iconContainer}>
-          <Image testID="rating-stage-icon" style={config.iconStyle} source={{uri: config.icon}} />
+          <Image testID="rating-stage-icon" style={config.iconStyle} source={{uri: config.iconInBase64}} />
         </View>
         <View style={styles.descriptionContainer}>
           <View style={styles.descriptionTitle}>

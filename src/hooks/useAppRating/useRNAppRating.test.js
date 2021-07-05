@@ -11,7 +11,7 @@ const mockLoadCustomRNAppRatingConfig = jest.fn();
 const mockLoadCustomRules = jest.fn();
 const mockInitRNAppRatingStorage = jest.fn();
 const mockValidateRules = jest.fn();
-const mockValidateShowRateNever = jest.fn();
+const mockCanShowRateNever = jest.fn();
 const wrapper = ({children}) => (
   <RNAppRatingContext.Provider
     value={{
@@ -28,7 +28,7 @@ const wrapper = ({children}) => (
 jest.mock('../useRuleManager/useRuleManager', () => () => ({
   initRNAppRatingStorage: mockInitRNAppRatingStorage,
   validateRules: mockValidateRules,
-  validateShowRateNever: mockValidateShowRateNever,
+  canShowRateNever: mockCanShowRateNever,
 }));
 
 describe('RNAppRating tests', () => {
@@ -37,7 +37,7 @@ describe('RNAppRating tests', () => {
   describe('initRNAppRating', () => {
     it('should initialise RNAppRating and load custom rules, if given', async () => {
       const customRules = {
-        minimumAppLaunchTimes: 1,
+        minimumAppLaunches: 1,
         minimumAppInstalledDays: 2,
       };
       mockInitRNAppRatingStorage.mockReturnValue({launchTimes: 1});
@@ -105,12 +105,12 @@ describe('RNAppRating tests', () => {
     });
   });
 
-  describe('shouldShowRateNever', () => {
-    it('should validate and return if rate never button should be shown, based on configured rule conditions', () => {
+  describe('canShowRateNever', () => {
+    it('should check and return if rate never button should be shown, based on configured rule conditions', () => {
       const {result} = renderHook(useRNAppRating, {wrapper});
       result.current.shouldShowRateNever();
 
-      expect(mockValidateShowRateNever).toHaveBeenCalledTimes(1);
+      expect(mockCanShowRateNever).toHaveBeenCalledTimes(1);
     });
   });
 });

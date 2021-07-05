@@ -25,7 +25,7 @@ describe('Rating tests', () => {
     const actionBar = getByTestId('action-bar');
     // icon
     expect(ratingIcon.props.style).toStrictEqual(ratingConfig.iconStyle);
-    expect(ratingIcon.props.source).toStrictEqual({uri: ratingConfig.icon});
+    expect(ratingIcon.props.source).toStrictEqual({uri: ratingConfig.iconInBase64});
     // title
     expect(ratingTitle.props.style).toStrictEqual(ratingConfig.titleStyle);
     expect(ratingTitle.props.children).toBe(ratingConfig.title);

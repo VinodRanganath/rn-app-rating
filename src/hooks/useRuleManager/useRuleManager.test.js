@@ -12,10 +12,10 @@ const wrapper = ({children}) => {
   const config = {
     ...DEFAULT_CONFIG,
     rules: {
-      minimumAppLaunchTimes: 1,
+      minimumAppLaunches: 1,
       minimumAppInstalledDays: 1,
-      minimumAppLaunchTimesPostRateLater: 1,
-      minimumAppInstalledDaysPostRateLater: 1,
+      minimumAppLaunchesSinceRateLater: 1,
+      minimumDaysSinceRateLater: 1,
       minimumRateLaterClicksToShowRateNever: 2,
     },
   };
@@ -156,7 +156,7 @@ describe('useRuleManager tests', () => {
       expect(res).toBeTruthy();
     });
 
-    it('should validate to false if launch times < minimumAppLaunchTimes', async () => {
+    it('should validate to false if launch times < minimumAppLaunches', async () => {
       const storageValue = {
         launchTimes: 0,
       };
@@ -187,7 +187,7 @@ describe('useRuleManager tests', () => {
       expect(res).toBeFalsy();
     });
 
-    it('should validate to false if launch times < minimumAppLaunchTimesPostRateLater, when rateLater=true', async () => {
+    it('should validate to false if launch times < minimumAppLaunchesSinceRateLater, when rateLater=true', async () => {
       const storageValue = {
         launchTimes: 1,
         installedOn: yesterday,
@@ -205,7 +205,7 @@ describe('useRuleManager tests', () => {
       expect(res).toBeFalsy();
     });
 
-    it('should validate to false if days expired post rate later < minimumAppInstalledDaysPostRateLater, when rateLater=true', async () => {
+    it('should validate to false if days expired post rate later < minimumDaysSinceRateLater, when rateLater=true', async () => {
       const storageValue = {
         launchTimes: 1,
         installedOn: yesterday,
@@ -290,7 +290,7 @@ describe('useRuleManager tests', () => {
     });
   });
 
-  describe('validateShowRateNever', () => {
+  describe('canShowRateNever', () => {
     it('should return true if rate later clicks >= minimumRateLaterClicksToShowRateNever', async () => {
       mockGetFromStorage.mockImplementation(() =>
         Promise.resolve({...INITIAL_RN_APP_RATING_STORAGE_VALUE, rateLaterClicks: 2}),
@@ -298,7 +298,7 @@ describe('useRuleManager tests', () => {
 
       const {result} = renderHook(useRuleManager, {wrapper});
 
-      const res = await result.current.validateShowRateNever();
+      const res = await result.current.canShowRateNever();
 
       expect(mockGetFromStorage).toHaveBeenCalledTimes(1);
       expect(mockGetFromStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY);
@@ -312,7 +312,7 @@ describe('useRuleManager tests', () => {
 
       const {result} = renderHook(useRuleManager, {wrapper});
 
-      const res = await result.current.validateShowRateNever();
+      const res = await result.current.canShowRateNever();
 
       expect(mockGetFromStorage).toHaveBeenCalledTimes(1);
       expect(mockGetFromStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY);

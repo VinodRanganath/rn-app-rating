@@ -24,7 +24,7 @@ import {RNAppRatingProvider} from 'rn-app-rating';
 
 const App = () => {
   <RNAppRatingProvider>
-    <ChildComponent />
+    <MyComponent />
   </RNAppRatingProvider>
 };
 
@@ -110,21 +110,21 @@ rule validation.
 
 ```json
 {
-  "minimumAppLaunchTimes": 7,
+  "minimumAppLaunches": 7,
   "minimumAppInstalledDays": 5,
-  "minimumAppLaunchTimesPostRateLater": 5,
-  "minimumAppInstalledDaysPostRateLater": 3,
+  "minimumAppLaunchesSinceRateLater": 5,
+  "minimumDaysSinceRateLater": 3,
   "minimumRateLaterClicksToShowRateNever": 3
 }
 ```
 
-`minimumAppLaunchTimes` Minimum number of app launches before showing rating popup
+`minimumAppLaunches` Minimum number of app launches before showing rating popup
 
 `minimumAppInstalledDays` Minimum number of days the app should be installed before showing rating popup
 
-`minimumAppLaunchTimesPostRateLater` Minimum number of app launches, post rate later click, before showing rating popup again
+`minimumAppLaunchesSinceRateLater` Minimum number of app launches, since rate later click, before showing rating popup again
 
-`minimumAppInstalledDaysPostRateLater` Minimum number of days expired, post rate later click, before showing rating popup
+`minimumDaysSinceRateLater` Minimum number of days expired, since rate later click, before showing rating popup
 
 `minimumRateLaterClicksToShowRateNever` Minimum rate later clicks required to show rate never option
 
@@ -132,11 +132,14 @@ rule validation.
 Custom rules can be configured by passing them to **initRNAppRating** at the time of initialisation.
 
 ```javascript
+import {useRNAppRating} from 'rn-app-rating';
+
+const {initRNAppRating} = useRNAppRating();
 const customRules = {
-  minimumAppLaunchTimes: 3,
+  minimumAppLaunches: 3,
   minimumAppInstalledDays: 2,
-  minimumAppLaunchTimesPostRateLater: 3,
-  minimumAppInstalledDaysPostRateLater: 4,
+  minimumAppLaunchesSinceRateLater: 3,
+  minimumDaysSinceRateLater: 4,
   minimumRateLaterClicksToShowRateNever: 3,
 };
 
@@ -162,7 +165,7 @@ At the end of the journey (popup close) the callback, that was passed to
 {
   "rating": 0,
   "feedback": "",
-  "storeRating": false,
+  "optedForStoreRating": false,
   "rateLater": false,
   "rateNever": false,
   "journeyCancelled": false
@@ -175,12 +178,12 @@ The way these stages are handled can be seen below,
 | --- | --- | --- | --- |
 | Rating | Rate later | close with callback | rateLater=true |
 | Rating | Submit (rating > positiveRatingThreshold) | transition to Store Rating Confirmation | |
-| Rating | Submit (rating > positiveRatingThreshold && skipStage=true) | close with callback and open native in-app rating dialog | rating={value}, storeRating=true |
+| Rating | Submit (rating > positiveRatingThreshold && skipStage=true) | close with callback and open native in-app rating dialog | rating={value}, optedForStoreRating=true |
 | Rating | Submit (rating < positiveRatingThreshold) | transition to Feedback | |
 | Feedback | Submit | close with callback | rating={value}, feedback={text} |
 | Feedback | Cancel | close with callback | rating={value}, rateLate=true |
-| Store Rating Confirmation | Rate now | close with callback and open native in-app rating dialog | rating={value}, storeRating=true |
-| Store Rating Confirmation | Rate later | close with callback | rating={value}, storeRating=false |
+| Store Rating Confirmation | Rate now | close with callback and open native in-app rating dialog | rating={value}, optedForStoreRating=true |
+| Store Rating Confirmation | Rate later | close with callback | rating={value}, optedForStoreRating=false |
 
 #### Design Customisations
 The default designs of the RNAppRating popup can be modified by passing them as a config,
@@ -197,7 +200,7 @@ type config = {
          */
         component: ReactElement,
         // Base64 image to be rendered
-        icon: String,
+        iconInBase64: String,
         // Style object for icon
         iconStyle: Object,
         // Title text
@@ -211,7 +214,7 @@ type config = {
         // Number representing the positive rating threshold
         positiveRatingThreshold: Number,
         // Base64 image of icon to be used in rating input
-        ratingIcon: String,
+        ratingIconInBase64: String,
         // Style object for rating input icon
         ratingIconStyle: Object,
         // Style object for fill colour of rating input icon on selection
@@ -238,7 +241,7 @@ type config = {
          */
         component: ReactElement,
         // Base64 image to be rendered
-        icon: String,
+        iconInBase64: String,
         // Style object for icon
         iconStyle: Object,
         // Title text
@@ -278,7 +281,7 @@ type config = {
          */
         skipStage: Boolean,
         // Base64 image to be rendered
-        icon: String,
+        iconInBase64: String,
         // Style object for icon
         iconStyle: Object,
         // Title text

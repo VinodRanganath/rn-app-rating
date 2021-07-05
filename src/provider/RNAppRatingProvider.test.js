@@ -156,7 +156,7 @@ describe('RNAppRatingProvider tests', () => {
 
     it('should load custom rules into config, if set', () => {
       const customRules = {
-        minimumAppLaunchTimes: 1,
+        minimumAppLaunches: 1,
         minimumAppInstalledDays: 1,
       };
 

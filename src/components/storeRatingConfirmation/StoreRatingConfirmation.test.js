@@ -22,7 +22,7 @@ describe('Store rating confirmation tests', () => {
     const actionBar = getByTestId('action-bar');
     // icon
     expect(storeRatingConfirmationIcon.props.style).toStrictEqual(storeRatingConfirmationConfig.iconStyle);
-    expect(storeRatingConfirmationIcon.props.source).toStrictEqual({uri: storeRatingConfirmationConfig.icon});
+    expect(storeRatingConfirmationIcon.props.source).toStrictEqual({uri: storeRatingConfirmationConfig.iconInBase64});
     // title
     expect(storeRatingConfirmationTitle.props.style).toStrictEqual(storeRatingConfirmationConfig.titleStyle);
     expect(storeRatingConfirmationTitle.props.children).toBe(storeRatingConfirmationConfig.title);

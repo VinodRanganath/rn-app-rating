@@ -8,18 +8,17 @@ import {
 } from '../constants';
 import styles from '../components/styles';
 
-// TODO: Rename icon to iconInBase64
 const DEFAULT_CONFIG = {
   rating: {
     component: null,
-    icon: APP_RATING_PROMPT_ICON,
+    iconInBase64: APP_RATING_PROMPT_ICON,
     iconStyle: styles.appRatingPromptIcon,
     title: 'Rate Your Experience',
     titleStyle: styles.descriptionTitleText,
     subtitle: 'How would you rate your experience so far?',
     subtitleStyle: styles.descriptionSubtitleText,
     positiveRatingThreshold: POSITIVE_RATING_THRESHOLD,
-    ratingIcon: RATING_STAR_ICON,
+    ratingIconInBase64: RATING_STAR_ICON,
     ratingIconStyle: styles.starRating,
     ratingIconFillStyle: styles.starRatingFill,
     showRateNever: false,
@@ -32,7 +31,7 @@ const DEFAULT_CONFIG = {
   },
   feedback: {
     component: null,
-    icon: FEEDBACK_ICON,
+    iconInBase64: FEEDBACK_ICON,
     iconStyle: styles.appRatingPromptIcon,
     title: 'Would you mind giving us your valuable feedback?',
     titleStyle: styles.descriptionTitleText,
@@ -50,7 +49,7 @@ const DEFAULT_CONFIG = {
   storeRatingConfirmation: {
     component: null,
     skipStage: false,
-    icon: STORE_RATING_ICON,
+    iconInBase64: STORE_RATING_ICON,
     iconStyle: styles.appRatingPromptIcon,
     title: 'Rate us on the store',
     titleStyle: styles.descriptionTitleText,

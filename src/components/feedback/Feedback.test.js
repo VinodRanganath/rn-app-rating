@@ -23,7 +23,7 @@ describe('Feedback test', () => {
     const actionBar = getByTestId('action-bar');
     // icon
     expect(feedbackIcon.props.style).toStrictEqual(feedbackConfig.iconStyle);
-    expect(feedbackIcon.props.source).toStrictEqual({uri: feedbackConfig.icon});
+    expect(feedbackIcon.props.source).toStrictEqual({uri: feedbackConfig.iconInBase64});
     // title
     expect(feedbackTitle.props.style).toStrictEqual(feedbackConfig.titleStyle);
     expect(feedbackTitle.props.children).toBe(feedbackConfig.title);

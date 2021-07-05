@@ -18,7 +18,7 @@ const RatingInput = props => {
           <Image
             testID="rating-input-button-image"
             style={fetchRatingImageStyle(RATING_VALUE[ratingValueKey])}
-            source={{uri: config.ratingIcon}}
+            source={{uri: config.ratingIconInBase64}}
           />
         </TouchableWithoutFeedback>
       ))}
