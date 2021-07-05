@@ -10,7 +10,7 @@ const mockSetJourneyCompletionCallback = jest.fn();
 const mockLoadCustomRNAppRatingConfig = jest.fn();
 const mockLoadCustomRules = jest.fn();
 const mockInitRNAppRatingStorage = jest.fn();
-const mockValidateRules = jest.fn();
+const mockRulesSatisfied = jest.fn();
 const mockCanShowRateNever = jest.fn();
 const wrapper = ({children}) => (
   <RNAppRatingContext.Provider
@@ -27,7 +27,7 @@ const wrapper = ({children}) => (
 
 jest.mock('../useRuleManager/useRuleManager', () => () => ({
   initRNAppRatingStorage: mockInitRNAppRatingStorage,
-  validateRules: mockValidateRules,
+  rulesSatisfied: mockRulesSatisfied,
   canShowRateNever: mockCanShowRateNever,
 }));
 
@@ -55,7 +55,7 @@ describe('RNAppRating tests', () => {
     it('should set showRNAppRating=true, load custom config and set journey completion callback, when showRNAppRatingPrompt is called and rules are satisfied', async () => {
       const customCallback = jest.fn();
       const customConfig = {};
-      mockValidateRules.mockReturnValue(true);
+      mockRulesSatisfied.mockReturnValue(true);
 
       const {result} = renderHook(useRNAppRating, {wrapper});
       const res = await result.current.showRNAppRating(customCallback, customConfig);
@@ -70,7 +70,7 @@ describe('RNAppRating tests', () => {
     });
 
     it('should not show app rating, when showRNAppRatingPrompt is called and rules are not satisfied', async () => {
-      mockValidateRules.mockReturnValue(false);
+      mockRulesSatisfied.mockReturnValue(false);
 
       const {result} = renderHook(useRNAppRating, {wrapper});
       const res = await result.current.showRNAppRating();

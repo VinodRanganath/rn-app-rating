@@ -48,34 +48,25 @@ const useRuleManager = () => {
     return storageValue;
   };
 
-  // TODO: Rename validateRules to rulesSatisfied
-  // TODO: Refactor method
-  const validateRules = async () => {
+  const rulesSatisfied = async () => {
     const storageValue = await getRNAppRatingStorageValue();
-    if (storageValue) {
-      const {launchTimes, installedOn, rateLater, launchTimesPostRateLater, rateLaterOn, rateNever} = storageValue;
-      const {minimumAppLaunches, minimumAppInstalledDays, minimumAppLaunchesSinceRateLater, minimumDaysSinceRateLater} =
-        rules;
-      let ruleBroken = false;
+    // Return false if not value is found in storage or if rateNever=true
+    if (!storageValue || storageValue?.rateNever) return false;
 
-      if (!rateNever) {
-        if (launchTimes < minimumAppLaunches || daysElapsed(installedOn) < minimumAppInstalledDays) {
-          ruleBroken = true;
-        }
-        if (
-          rateLater &&
-          (launchTimesPostRateLater < minimumAppLaunchesSinceRateLater ||
-            daysElapsed(rateLaterOn) < minimumDaysSinceRateLater)
-        ) {
-          ruleBroken = true;
-        }
-      } else {
-        ruleBroken = true;
-      }
-
-      return !ruleBroken;
+    const {launchTimes, installedOn, rateLater, launchTimesPostRateLater, rateLaterOn} = storageValue;
+    const {minimumAppLaunches, minimumAppInstalledDays, minimumAppLaunchesSinceRateLater, minimumDaysSinceRateLater} =
+      rules;
+    if (
+      rateLater &&
+      (launchTimesPostRateLater < minimumAppLaunchesSinceRateLater ||
+        daysElapsed(rateLaterOn) < minimumDaysSinceRateLater)
+    ) {
+      return false;
     }
-    return false;
+    if (launchTimes < minimumAppLaunches || daysElapsed(installedOn) < minimumAppInstalledDays) {
+      return false;
+    }
+    return true;
   };
 
   const setRateLater = async () => {
@@ -100,7 +91,7 @@ const useRuleManager = () => {
     return storageValue.rateLaterClicks >= rules.minimumRateLaterClicksToShowRateNever;
   };
 
-  return {initRNAppRatingStorage, validateRules, setRateLater, setRateNever, canShowRateNever};
+  return {initRNAppRatingStorage, rulesSatisfied, setRateLater, setRateNever, canShowRateNever};
 };
 
 export default useRuleManager;

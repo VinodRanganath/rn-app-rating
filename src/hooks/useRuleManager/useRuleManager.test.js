@@ -116,11 +116,11 @@ describe('useRuleManager tests', () => {
     });
   });
 
-  describe('validateRules', () => {
+  describe('rulesSatisfied', () => {
     const yesterday = moment().subtract(1, 'day').utc().valueOf();
     const today = moment().utc().valueOf();
 
-    it('should validate to true if all rules are satisfied, when rateLater=false', async () => {
+    it('should return true if all rules are satisfied, when rateLater=false', async () => {
       const storageValue = {
         launchTimes: 1,
         installedOn: yesterday,
@@ -130,14 +130,14 @@ describe('useRuleManager tests', () => {
 
       const {result} = renderHook(useRuleManager, {wrapper});
 
-      const res = await result.current.validateRules();
+      const res = await result.current.rulesSatisfied();
 
       expect(mockGetFromStorage).toHaveBeenCalledTimes(1);
       expect(mockGetFromStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY);
       expect(res).toBeTruthy();
     });
 
-    it('should validate to true if all rules are satisfied, when rateLater=true', async () => {
+    it('should return true if all rules are satisfied, when rateLater=true', async () => {
       const storageValue = {
         launchTimes: 1,
         installedOn: yesterday,
@@ -149,14 +149,14 @@ describe('useRuleManager tests', () => {
 
       const {result} = renderHook(useRuleManager, {wrapper});
 
-      const res = await result.current.validateRules();
+      const res = await result.current.rulesSatisfied();
 
       expect(mockGetFromStorage).toHaveBeenCalledTimes(1);
       expect(mockGetFromStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY);
       expect(res).toBeTruthy();
     });
 
-    it('should validate to false if launch times < minimumAppLaunches', async () => {
+    it('should return false if launch times < minimumAppLaunches', async () => {
       const storageValue = {
         launchTimes: 0,
       };
@@ -164,14 +164,14 @@ describe('useRuleManager tests', () => {
 
       const {result} = renderHook(useRuleManager, {wrapper});
 
-      const res = await result.current.validateRules();
+      const res = await result.current.rulesSatisfied();
 
       expect(mockGetFromStorage).toHaveBeenCalledTimes(1);
       expect(mockGetFromStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY);
       expect(res).toBeFalsy();
     });
 
-    it('should validate to false if days expired post install < minimumAppInstalledDays', async () => {
+    it('should return false if days expired post install < minimumAppInstalledDays', async () => {
       const storageValue = {
         launchTimes: 1,
         installedOn: today,
@@ -180,14 +180,14 @@ describe('useRuleManager tests', () => {
 
       const {result} = renderHook(useRuleManager, {wrapper});
 
-      const res = await result.current.validateRules();
+      const res = await result.current.rulesSatisfied();
 
       expect(mockGetFromStorage).toHaveBeenCalledTimes(1);
       expect(mockGetFromStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY);
       expect(res).toBeFalsy();
     });
 
-    it('should validate to false if launch times < minimumAppLaunchesSinceRateLater, when rateLater=true', async () => {
+    it('should return false if launch times < minimumAppLaunchesSinceRateLater, when rateLater=true', async () => {
       const storageValue = {
         launchTimes: 1,
         installedOn: yesterday,
@@ -198,14 +198,14 @@ describe('useRuleManager tests', () => {
 
       const {result} = renderHook(useRuleManager, {wrapper});
 
-      const res = await result.current.validateRules();
+      const res = await result.current.rulesSatisfied();
 
       expect(mockGetFromStorage).toHaveBeenCalledTimes(1);
       expect(mockGetFromStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY);
       expect(res).toBeFalsy();
     });
 
-    it('should validate to false if days expired post rate later < minimumDaysSinceRateLater, when rateLater=true', async () => {
+    it('should return false if days expired post rate later < minimumDaysSinceRateLater, when rateLater=true', async () => {
       const storageValue = {
         launchTimes: 1,
         installedOn: yesterday,
@@ -217,14 +217,14 @@ describe('useRuleManager tests', () => {
 
       const {result} = renderHook(useRuleManager, {wrapper});
 
-      const res = await result.current.validateRules();
+      const res = await result.current.rulesSatisfied();
 
       expect(mockGetFromStorage).toHaveBeenCalledTimes(1);
       expect(mockGetFromStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY);
       expect(res).toBeFalsy();
     });
 
-    it('should validate to false, when rateNever=true', async () => {
+    it('should return false, when rateNever=true', async () => {
       const storageValue = {
         rateNever: true,
       };
@@ -232,19 +232,19 @@ describe('useRuleManager tests', () => {
 
       const {result} = renderHook(useRuleManager, {wrapper});
 
-      const res = await result.current.validateRules();
+      const res = await result.current.rulesSatisfied();
 
       expect(mockGetFromStorage).toHaveBeenCalledTimes(1);
       expect(mockGetFromStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY);
       expect(res).toBeFalsy();
     });
 
-    it('should validate to true if initialisation was not done and storage value is null', async () => {
+    it('should return true if initialisation was not done and storage value is null', async () => {
       mockGetFromStorage.mockImplementation(() => Promise.resolve());
 
       const {result} = renderHook(useRuleManager, {wrapper});
 
-      const res = await result.current.validateRules();
+      const res = await result.current.rulesSatisfied();
 
       expect(mockGetFromStorage).toHaveBeenCalledTimes(1);
       expect(mockGetFromStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY);

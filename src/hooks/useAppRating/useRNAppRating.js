@@ -10,7 +10,7 @@ const useRNAppRating = () => {
     loadCustomRNAppRatingConfig,
     loadCustomRules,
   } = useContext(RNAppRatingContext);
-  const {initRNAppRatingStorage, validateRules, canShowRateNever} = useRuleManager();
+  const {initRNAppRatingStorage, rulesSatisfied, canShowRateNever} = useRuleManager();
 
   const initRNAppRating = customRules => {
     loadCustomRules(customRules);
@@ -19,13 +19,13 @@ const useRNAppRating = () => {
 
   const showRNAppRating = async (journeyCompletionCallback, customConfig) => {
     // TODO: Introduce debug mode and enable logs
-    const rulesSatisfied = await validateRules();
-    if (rulesSatisfied) {
+    const res = await rulesSatisfied();
+    if (res) {
       loadCustomRNAppRatingConfig(customConfig);
       setJourneyCompletionCallback(journeyCompletionCallback);
       setShowRNAppRating(true);
     }
-    return rulesSatisfied;
+    return res;
   };
 
   const hideRNAppRating = () => setShowRNAppRating(false);
