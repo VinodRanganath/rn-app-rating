@@ -1,41 +1,45 @@
-import React, {useContext, useEffect} from 'react';
-import {render} from '@testing-library/react-native';
-import {View} from 'react-native';
-import {ACTION_EVENT, FEEDBACK, INITIAL_APP_RATING_RESPONSE, RATING, STORE_RATING_CONFIRMATION} from '../constants';
-import RNAppRatingProvider from './RNAppRatingProvider';
+import React, {useContext} from 'react';
 import {RNAppRatingContext} from './RNAppRatingContext';
+import {View} from 'react-native';
+import RNAppRatingProvider from './RNAppRatingProvider';
+import {fireEvent, render} from '@testing-library/react-native';
+import {ACTION_EVENT, FEEDBACK, INITIAL_APP_RATING_RESPONSE, RATING, STORE_RATING_CONFIRMATION} from '../constants';
 import DEFAULT_CONFIG from '../config/Config';
 
 const mockCallback = jest.fn();
 const mockSetRateLater = jest.fn().mockImplementation(() => Promise.resolve());
 const mockSetRateNever = jest.fn().mockImplementation(() => Promise.resolve());
-const MockConsumerComponent = props => {
-  const {show, customConfig, customRules, callback, event, param} = props;
+const mockSetRatingGiven = jest.fn().mockImplementation(() => Promise.resolve());
+const MockConsumerComponent = () => {
   const {
     showRNAppRating,
     setShowRNAppRating,
     stage,
     fireActionEvent,
     setJourneyCompletionCallback,
-    loadCustomRNAppRatingConfig,
+    loadCustomConfig,
     loadCustomRules,
     config,
   } = useContext(RNAppRatingContext);
 
-  useEffect(() => {
-    setShowRNAppRating(show);
-    if (customConfig) loadCustomRNAppRatingConfig(customConfig);
-    if (customRules) loadCustomRules(customRules);
-    if (event) fireActionEvent(event, param);
-    if (callback) setJourneyCompletionCallback(mockCallback);
-  }, []);
-
-  return <View testID="mock-component" showRNAppRating={showRNAppRating} stage={stage} config={config} />;
+  return (
+    <View
+      testID="mock-component"
+      showRNAppRating={showRNAppRating}
+      stage={stage}
+      config={config}
+      onSetShowRNAppRating={show => setShowRNAppRating(show)}
+      onSetCallback={() => setJourneyCompletionCallback(mockCallback)}
+      onFireEvent={(event, param) => fireActionEvent(event, param)}
+      onLoadCustomRules={customRules => loadCustomRules(customRules)}
+      onLoadCustomConfig={customConfig => loadCustomConfig(customConfig)}
+    />
+  );
 };
-const MockConsumerWrapper = props => {
+const MockConsumerWrapper = () => {
   return (
     <RNAppRatingProvider>
-      <MockConsumerComponent {...props} />
+      <MockConsumerComponent />
     </RNAppRatingProvider>
   );
 };
@@ -43,130 +47,329 @@ const MockConsumerWrapper = props => {
 jest.mock('../hooks/useRuleManager/useRuleManager', () => () => ({
   setRateLater: mockSetRateLater,
   setRateNever: mockSetRateNever,
+  setRatingGiven: mockSetRatingGiven,
 }));
 
 describe('RNAppRatingProvider tests', () => {
   afterEach(() => jest.clearAllMocks());
 
   describe('showRNAppRating', () => {
-    it('should provide default showRNAppRating value, to consumer component, as false', () => {
+    it('should default to showRNAppRating=false initially', () => {
       const {getByTestId} = render(<MockConsumerWrapper />);
 
-      const consumer = getByTestId('mock-component');
-      expect(consumer.props.showRNAppRating).toBeFalsy();
+      expect(getByTestId('mock-component').props.showRNAppRating).toBeFalsy();
     });
 
-    it('should provide showRNAppRating value, to consumer component, as true if set', () => {
-      const {getByTestId} = render(<MockConsumerWrapper show />);
+    it('should set showRNAppRating=true if set', () => {
+      const {getByTestId} = render(<MockConsumerWrapper />);
 
-      const consumer = getByTestId('mock-component');
-      expect(consumer.props.showRNAppRating).toBeTruthy();
+      const mockComponent = getByTestId('mock-component');
+
+      expect(mockComponent.props.showRNAppRating).toBeFalsy();
+      // show
+      fireEvent(mockComponent, 'onSetShowRNAppRating', true);
+      expect(mockComponent.props.showRNAppRating).toBeTruthy();
+    });
+  });
+
+  describe('setJourneyCompletionCallback', () => {
+    it('should set journeyCompletionCallback if passed, and must be invoked, with response, on showRNAppRating=false', () => {
+      const {getByTestId} = render(<MockConsumerWrapper />);
+
+      const mockComponent = getByTestId('mock-component');
+
+      // show
+      fireEvent(mockComponent, 'onSetShowRNAppRating', true);
+      expect(mockComponent.props.showRNAppRating).toBeTruthy();
+      // set callback
+      fireEvent(mockComponent, 'onSetCallback');
+      // hide
+      fireEvent(mockComponent, 'onSetShowRNAppRating', false);
+      expect(mockComponent.props.showRNAppRating).toBeFalsy();
+      // invoke callback with response
+      expect(mockCallback).toHaveBeenCalledTimes(1);
+      expect(mockCallback).toHaveBeenNthCalledWith(1, INITIAL_APP_RATING_RESPONSE);
     });
   });
 
   describe('stage and fireActionEvent', () => {
-    it('should provide default stage value, to consumer component, as RATING', () => {
+    it('should have default stage as RATING', () => {
       const {getByTestId} = render(<MockConsumerWrapper />);
 
-      const consumer = getByTestId('mock-component');
-      expect(consumer.props.stage).toStrictEqual(RATING);
+      const mockComponent = getByTestId('mock-component');
+
+      expect(mockComponent.props.stage).toEqual(RATING);
     });
 
-    it('should provide stage value, to consumer component, as FEEDBACK if SUBMIT event is fired, in RATING stage, with rating less than threshold', () => {
-      const {getByTestId} = render(<MockConsumerWrapper event={ACTION_EVENT.SUBMIT} param={{rating: 2}} callback />);
+    describe('SUBMIT', () => {
+      it('should set stage as FEEDBACK if event=SUBMIT, stage=RATING and rating<positiveRatingThreshold', () => {
+        const {getByTestId} = render(<MockConsumerWrapper />);
 
-      const consumer = getByTestId('mock-component');
-      expect(consumer.props.stage).toStrictEqual(FEEDBACK);
-    });
+        const mockComponent = getByTestId('mock-component');
 
-    it('should provide stage value, to consumer component, as STORE_RATING_CONFIRMATION if SUBMIT event is fired, in RATING stage, with rating equal to threshold', () => {
-      const {getByTestId} = render(<MockConsumerWrapper event={ACTION_EVENT.SUBMIT} param={{rating: 4}} />);
-
-      const consumer = getByTestId('mock-component');
-      expect(consumer.props.stage).toStrictEqual(STORE_RATING_CONFIRMATION);
-    });
-
-    it('should provide stage value, to consumer component, as STORE_RATING_CONFIRMATION if SUBMIT event is fired, in RATING stage, with rating greater than threshold', () => {
-      const {getByTestId} = render(<MockConsumerWrapper event={ACTION_EVENT.SUBMIT} param={{rating: 4}} />);
-
-      const consumer = getByTestId('mock-component');
-      expect(consumer.props.stage).toStrictEqual(STORE_RATING_CONFIRMATION);
-    });
-
-    it('should invoke custom callback with rateLater=true in response, on journey end, if RATE_LATER event is fired', () => {
-      render(<MockConsumerWrapper callback event={ACTION_EVENT.RATE_LATER} />);
-
-      expect(mockCallback).toHaveBeenCalledTimes(1);
-      expect(mockCallback).toHaveBeenNthCalledWith(1, {
-        ...INITIAL_APP_RATING_RESPONSE,
-        rateLater: true,
+        // show
+        fireEvent(mockComponent, 'onSetShowRNAppRating', true);
+        expect(mockComponent.props.stage).toEqual(RATING);
+        // submit rating
+        fireEvent(mockComponent, 'onFireEvent', ACTION_EVENT.SUBMIT, {rating: 3});
+        expect(mockComponent.props.showRNAppRating).toBeTruthy();
+        expect(mockComponent.props.stage).toEqual(FEEDBACK);
       });
-      expect(mockSetRateLater).toHaveBeenCalledTimes(1);
-    });
 
-    it('should invoke custom callback with rateNever=true in response, on journey end, if RATE_NEVER event is fired', () => {
-      render(<MockConsumerWrapper callback event={ACTION_EVENT.RATE_NEVER} />);
+      it('should set stage as STORE_RATING_CONFIRMATION if event=SUBMIT, stage=RATING, rating===positiveRatingThreshold and skipStage=false', () => {
+        const {getByTestId} = render(<MockConsumerWrapper />);
 
-      expect(mockCallback).toHaveBeenCalledTimes(1);
-      expect(mockCallback).toHaveBeenNthCalledWith(1, {
-        ...INITIAL_APP_RATING_RESPONSE,
-        rateNever: true,
+        const mockComponent = getByTestId('mock-component');
+
+        // show
+        fireEvent(mockComponent, 'onSetShowRNAppRating', true);
+        expect(mockComponent.props.stage).toEqual(RATING);
+        // submit rating
+        fireEvent(mockComponent, 'onFireEvent', ACTION_EVENT.SUBMIT, {rating: 4});
+        expect(mockComponent.props.showRNAppRating).toBeTruthy();
+        expect(mockComponent.props.stage).toEqual(STORE_RATING_CONFIRMATION);
       });
-      expect(mockSetRateNever).toHaveBeenCalledTimes(1);
+
+      it('should set stage as STORE_RATING_CONFIRMATION if event=SUBMIT, stage=RATING, rating>positiveRatingThreshold and skipStage=false', () => {
+        const {getByTestId} = render(<MockConsumerWrapper />);
+
+        const mockComponent = getByTestId('mock-component');
+
+        // show
+        fireEvent(mockComponent, 'onSetShowRNAppRating', true);
+        expect(mockComponent.props.stage).toEqual(RATING);
+        // submit rating
+        fireEvent(mockComponent, 'onFireEvent', ACTION_EVENT.SUBMIT, {rating: 5});
+        expect(mockComponent.props.showRNAppRating).toBeTruthy();
+        expect(mockComponent.props.stage).toEqual(STORE_RATING_CONFIRMATION);
+      });
+
+      it('should hide popup, with appropriate response, if event=SUBMIT, stage=RATING, rating>=positiveRatingThreshold and skipStage=true', () => {
+        const {getByTestId} = render(<MockConsumerWrapper />);
+
+        const mockComponent = getByTestId('mock-component');
+
+        // show
+        fireEvent(mockComponent, 'onSetShowRNAppRating', true);
+        expect(mockComponent.props.stage).toEqual(RATING);
+        // set skipStage=true
+        fireEvent(mockComponent, 'onLoadCustomConfig', {storeRatingConfirmation: {skipStage: true}});
+        // set callback
+        fireEvent(mockComponent, 'onSetCallback');
+        // submit rating
+        fireEvent(mockComponent, 'onFireEvent', ACTION_EVENT.SUBMIT, {rating: 4});
+        expect(mockComponent.props.showRNAppRating).toBeFalsy();
+        expect(mockCallback).toHaveBeenCalledTimes(1);
+        expect(mockCallback).toHaveBeenNthCalledWith(1, {
+          ...INITIAL_APP_RATING_RESPONSE,
+          rating: 4,
+          optedForStoreRating: true,
+        });
+        expect(mockSetRatingGiven).toHaveBeenCalledTimes(1);
+      });
+
+      it('should hide popup, with appropriate response, if event=SUBMIT, stage=FEEDBACK', () => {
+        const {getByTestId} = render(<MockConsumerWrapper />);
+
+        const mockComponent = getByTestId('mock-component');
+
+        // show
+        fireEvent(mockComponent, 'onSetShowRNAppRating', true);
+        expect(mockComponent.props.stage).toEqual(RATING);
+        // set callback
+        fireEvent(mockComponent, 'onSetCallback');
+        // submit rating
+        fireEvent(mockComponent, 'onFireEvent', ACTION_EVENT.SUBMIT, {rating: 2});
+        // submit feedback
+        fireEvent(mockComponent, 'onFireEvent', ACTION_EVENT.SUBMIT, {feedback: 'custom feedback'});
+        expect(mockComponent.props.showRNAppRating).toBeFalsy();
+        expect(mockComponent.props.stage).toEqual(FEEDBACK);
+        expect(mockCallback).toHaveBeenCalledTimes(1);
+        expect(mockCallback).toHaveBeenNthCalledWith(1, {
+          ...INITIAL_APP_RATING_RESPONSE,
+          rating: 2,
+          feedback: 'custom feedback',
+        });
+        expect(mockSetRatingGiven).toHaveBeenCalledTimes(1);
+      });
+
+      it('should hide popup, with appropriate response, if event=SUBMIT, stage=STORE_RATING_CONFIRMATION', () => {
+        const {getByTestId} = render(<MockConsumerWrapper />);
+
+        const mockComponent = getByTestId('mock-component');
+
+        // show
+        fireEvent(mockComponent, 'onSetShowRNAppRating', true);
+        expect(mockComponent.props.stage).toEqual(RATING);
+        // set callback
+        fireEvent(mockComponent, 'onSetCallback');
+        // submit rating
+        fireEvent(mockComponent, 'onFireEvent', ACTION_EVENT.SUBMIT, {rating: 5});
+        // opt for store rating
+        fireEvent(mockComponent, 'onFireEvent', ACTION_EVENT.SUBMIT);
+        expect(mockComponent.props.showRNAppRating).toBeFalsy();
+        expect(mockComponent.props.stage).toEqual(STORE_RATING_CONFIRMATION);
+        expect(mockCallback).toHaveBeenCalledTimes(1);
+        expect(mockCallback).toHaveBeenNthCalledWith(1, {
+          ...INITIAL_APP_RATING_RESPONSE,
+          rating: 5,
+          optedForStoreRating: true,
+        });
+        expect(mockSetRatingGiven).toHaveBeenCalledTimes(1);
+      });
     });
 
-    it('should invoke custom callback, on journey end, if CANCEL event is fired', () => {
-      render(<MockConsumerWrapper callback event={ACTION_EVENT.CANCEL} />);
+    describe('RATE_LATER', () => {
+      it('should hide popup, with appropriate response, if event=RATE_LATER and stage=RATING', () => {
+        const {getByTestId} = render(<MockConsumerWrapper />);
 
-      expect(mockCallback).toHaveBeenCalledTimes(1);
-      expect(mockCallback).toHaveBeenNthCalledWith(1, INITIAL_APP_RATING_RESPONSE);
+        const mockComponent = getByTestId('mock-component');
+
+        // show
+        fireEvent(mockComponent, 'onSetShowRNAppRating', true);
+        expect(mockComponent.props.stage).toEqual(RATING);
+        // set callback
+        fireEvent(mockComponent, 'onSetCallback');
+        // rate later
+        fireEvent(mockComponent, 'onFireEvent', ACTION_EVENT.RATE_LATER);
+        expect(mockComponent.props.showRNAppRating).toBeFalsy();
+        expect(mockCallback).toHaveBeenCalledTimes(1);
+        expect(mockCallback).toHaveBeenNthCalledWith(1, {
+          ...INITIAL_APP_RATING_RESPONSE,
+          rating: 0,
+          rateLater: true,
+        });
+        expect(mockSetRateLater).toHaveBeenCalledTimes(1);
+      });
+
+      it('should hide popup, with appropriate response, if event=RATE_LATER and stage=STORE_RATING_CONFIRMATION', () => {
+        const {getByTestId} = render(<MockConsumerWrapper />);
+
+        const mockComponent = getByTestId('mock-component');
+
+        // show
+        fireEvent(mockComponent, 'onSetShowRNAppRating', true);
+        expect(mockComponent.props.stage).toEqual(RATING);
+        // set callback
+        fireEvent(mockComponent, 'onSetCallback');
+        // submit rating
+        fireEvent(mockComponent, 'onFireEvent', ACTION_EVENT.SUBMIT, {rating: 5});
+        expect(mockComponent.props.stage).toEqual(STORE_RATING_CONFIRMATION);
+        // rate later
+        fireEvent(mockComponent, 'onFireEvent', ACTION_EVENT.RATE_LATER);
+        expect(mockComponent.props.showRNAppRating).toBeFalsy();
+        expect(mockCallback).toHaveBeenCalledTimes(1);
+        expect(mockCallback).toHaveBeenNthCalledWith(1, {
+          ...INITIAL_APP_RATING_RESPONSE,
+          rating: 5,
+          rateLater: true,
+        });
+        expect(mockSetRateLater).toHaveBeenCalledTimes(1);
+      });
     });
 
-    it('should invoke custom callback with journeyCancelled=true in response, on journey end, if CANCEL event is fired without completing journey', () => {
-      render(<MockConsumerWrapper callback event={ACTION_EVENT.CANCEL} param={{journeyCancelled: true}} />);
+    describe('RATE_NEVER', () => {
+      it('should hide popup, with appropriate response, if event=RATE_NEVER and stage=RATING', () => {
+        const {getByTestId} = render(<MockConsumerWrapper />);
 
-      expect(mockCallback).toHaveBeenCalledTimes(1);
-      expect(mockCallback).toHaveBeenNthCalledWith(1, {
-        ...INITIAL_APP_RATING_RESPONSE,
-        journeyCancelled: true,
+        const mockComponent = getByTestId('mock-component');
+
+        // show
+        fireEvent(mockComponent, 'onSetShowRNAppRating', true);
+        expect(mockComponent.props.stage).toEqual(RATING);
+        // set callback
+        fireEvent(mockComponent, 'onSetCallback');
+        // rate never
+        fireEvent(mockComponent, 'onFireEvent', ACTION_EVENT.RATE_NEVER);
+        expect(mockComponent.props.showRNAppRating).toBeFalsy();
+        expect(mockCallback).toHaveBeenCalledTimes(1);
+        expect(mockCallback).toHaveBeenNthCalledWith(1, {
+          ...INITIAL_APP_RATING_RESPONSE,
+          rating: 0,
+          rateNever: true,
+        });
+        expect(mockSetRateNever).toHaveBeenCalledTimes(1);
+      });
+
+      it('should hide popup, with appropriate response, if event=RATE_NEVER and stage=STORE_RATING_CONFIRMATION', () => {
+        const {getByTestId} = render(<MockConsumerWrapper />);
+
+        const mockComponent = getByTestId('mock-component');
+
+        // show
+        fireEvent(mockComponent, 'onSetShowRNAppRating', true);
+        expect(mockComponent.props.stage).toEqual(RATING);
+        // set callback
+        fireEvent(mockComponent, 'onSetCallback');
+        // submit rating
+        fireEvent(mockComponent, 'onFireEvent', ACTION_EVENT.SUBMIT, {rating: 5});
+        expect(mockComponent.props.stage).toEqual(STORE_RATING_CONFIRMATION);
+        // rate never
+        fireEvent(mockComponent, 'onFireEvent', ACTION_EVENT.RATE_NEVER);
+        expect(mockComponent.props.showRNAppRating).toBeFalsy();
+        expect(mockCallback).toHaveBeenCalledTimes(1);
+        expect(mockCallback).toHaveBeenNthCalledWith(1, {
+          ...INITIAL_APP_RATING_RESPONSE,
+          rating: 5,
+          rateNever: true,
+        });
+        expect(mockSetRateNever).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('CANCEL', () => {
+      it('should hide popup, with appropriate response, if event=CANCEL and stage=FEEDBACK', () => {
+        const {getByTestId} = render(<MockConsumerWrapper />);
+
+        const mockComponent = getByTestId('mock-component');
+
+        // show
+        fireEvent(mockComponent, 'onSetShowRNAppRating', true);
+        expect(mockComponent.props.stage).toEqual(RATING);
+        // set callback
+        fireEvent(mockComponent, 'onSetCallback');
+        // submit rating
+        fireEvent(mockComponent, 'onFireEvent', ACTION_EVENT.SUBMIT, {rating: 2});
+        // cancel feedback
+        fireEvent(mockComponent, 'onFireEvent', ACTION_EVENT.CANCEL);
+        expect(mockComponent.props.showRNAppRating).toBeFalsy();
+        expect(mockComponent.props.stage).toEqual(FEEDBACK);
+        expect(mockCallback).toHaveBeenCalledTimes(1);
+        expect(mockCallback).toHaveBeenNthCalledWith(1, {
+          ...INITIAL_APP_RATING_RESPONSE,
+          rating: 2,
+        });
       });
     });
   });
 
-  describe('config', () => {
-    it('should provide default config value to consumer component', () => {
+  describe('loadCustomConfig', () => {
+    it('should load custom config if given', () => {
+      const {rating} = DEFAULT_CONFIG;
+
       const {getByTestId} = render(<MockConsumerWrapper />);
 
-      const consumer = getByTestId('mock-component');
+      const mockComponent = getByTestId('mock-component');
 
-      expect(consumer.props.config).toStrictEqual(DEFAULT_CONFIG);
+      expect(mockComponent.props.config).toStrictEqual(DEFAULT_CONFIG);
+      // load custom config
+      fireEvent(mockComponent, 'onLoadCustomConfig', {rating: {title: 'custom title'}});
+      expect(mockComponent.props.config).toStrictEqual({...DEFAULT_CONFIG, rating: {...rating, title: 'custom title'}});
     });
+  });
 
-    it('should provide custom config value, to consumer component, if set', () => {
-      const customConfig = {rating: {title: 'custom title'}};
-      const {getByTestId} = render(<MockConsumerWrapper customConfig={customConfig} />);
+  describe('loadCustomRules', () => {
+    it('should load custom rules if given', () => {
+      const {rules} = DEFAULT_CONFIG;
 
-      const consumer = getByTestId('mock-component');
+      const {getByTestId} = render(<MockConsumerWrapper />);
 
-      expect(consumer.props.config).toStrictEqual({
-        ...DEFAULT_CONFIG,
-        rating: {...DEFAULT_CONFIG.rating, ...customConfig.rating},
-      });
-    });
+      const mockComponent = getByTestId('mock-component');
 
-    it('should load custom rules into config, if set', () => {
-      const customRules = {
-        minimumAppLaunches: 1,
-        minimumAppInstalledDays: 1,
-      };
-
-      const {getByTestId} = render(<MockConsumerWrapper customRules={{...customRules}} />);
-
-      const consumer = getByTestId('mock-component');
-      expect(consumer.props.config).toStrictEqual({
-        ...DEFAULT_CONFIG,
-        rules: {...DEFAULT_CONFIG.rules, ...customRules},
-      });
+      expect(mockComponent.props.config).toStrictEqual(DEFAULT_CONFIG);
+      // load custom rules
+      fireEvent(mockComponent, 'onLoadCustomRules', {minimumAppLaunches: 4});
+      expect(mockComponent.props.config).toStrictEqual({...DEFAULT_CONFIG, rules: {...rules, minimumAppLaunches: 4}});
     });
   });
 });

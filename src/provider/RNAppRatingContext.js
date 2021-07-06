@@ -9,7 +9,7 @@ const initialState = {
   fireActionEvent: _ => {},
   setAppRatingResponse: _ => {},
   setJourneyCompletionCallback: _ => {},
-  loadCustomRNAppRatingConfig: _ => {},
+  loadCustomConfig: _ => {},
   loadCustomRules: _ => {},
   config: DEFAULT_CONFIG,
 };

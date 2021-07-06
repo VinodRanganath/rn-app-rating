@@ -33,6 +33,7 @@ const INITIAL_RN_APP_RATING_STORAGE_VALUE = {
   rateLaterOn: null,
   rateLaterClicks: 0,
   rateNever: false,
+  ratingGiven: false,
 };
 
 // rules

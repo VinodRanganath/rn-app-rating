@@ -7,7 +7,7 @@ import {ACTION_EVENT} from '../../constants';
 const mockSetShowRNAppRating = jest.fn();
 const mockFireActionEvent = jest.fn();
 const mockSetJourneyCompletionCallback = jest.fn();
-const mockLoadCustomRNAppRatingConfig = jest.fn();
+const mockLoadCustomConfig = jest.fn();
 const mockLoadCustomRules = jest.fn();
 const mockInitRNAppRatingStorage = jest.fn();
 const mockRulesSatisfied = jest.fn();
@@ -18,7 +18,7 @@ const wrapper = ({children}) => (
       setShowRNAppRating: mockSetShowRNAppRating,
       fireActionEvent: mockFireActionEvent,
       setJourneyCompletionCallback: mockSetJourneyCompletionCallback,
-      loadCustomRNAppRatingConfig: mockLoadCustomRNAppRatingConfig,
+      loadCustomConfig: mockLoadCustomConfig,
       loadCustomRules: mockLoadCustomRules,
     }}>
     {children}
@@ -65,8 +65,8 @@ describe('RNAppRating tests', () => {
       expect(mockSetShowRNAppRating).toHaveBeenNthCalledWith(1, true);
       expect(mockSetJourneyCompletionCallback).toHaveBeenCalledTimes(1);
       expect(mockSetJourneyCompletionCallback).toHaveBeenNthCalledWith(1, customCallback);
-      expect(mockLoadCustomRNAppRatingConfig).toHaveBeenCalledTimes(1);
-      expect(mockLoadCustomRNAppRatingConfig).toHaveBeenNthCalledWith(1, customConfig);
+      expect(mockLoadCustomConfig).toHaveBeenCalledTimes(1);
+      expect(mockLoadCustomConfig).toHaveBeenNthCalledWith(1, customConfig);
     });
 
     it('should not show app rating, when showRNAppRatingPrompt is called and rules are not satisfied', async () => {
@@ -78,7 +78,7 @@ describe('RNAppRating tests', () => {
       expect(res).toBeFalsy();
       expect(mockSetShowRNAppRating).toHaveBeenCalledTimes(0);
       expect(mockSetJourneyCompletionCallback).toHaveBeenCalledTimes(0);
-      expect(mockLoadCustomRNAppRatingConfig).toHaveBeenCalledTimes(0);
+      expect(mockLoadCustomConfig).toHaveBeenCalledTimes(0);
     });
   });
 

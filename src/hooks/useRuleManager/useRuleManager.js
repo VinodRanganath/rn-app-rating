@@ -28,6 +28,9 @@ const useRuleManager = () => {
       return await getRNAppRatingStorageValue();
     }
 
+    // Return if rateNever=true or ratingGiven=true
+    if (storageValue?.rateNever || storageValue?.ratingGiven) return;
+
     // update values
     const {launchTimes, rateLater, launchTimesPostRateLater, rateLaterOn} = storageValue;
     const {minimumAppLaunchesSinceRateLater, minimumDaysSinceRateLater} = rules;
@@ -50,8 +53,8 @@ const useRuleManager = () => {
 
   const rulesSatisfied = async () => {
     const storageValue = await getRNAppRatingStorageValue();
-    // Return false if not value is found in storage or if rateNever=true
-    if (!storageValue || storageValue?.rateNever) return false;
+    // Return false if not value is found in storage or rateNever=true or ratingGiven=true
+    if (!storageValue || storageValue?.rateNever || storageValue?.ratingGiven) return false;
 
     const {launchTimes, installedOn, rateLater, launchTimesPostRateLater, rateLaterOn} = storageValue;
     const {minimumAppLaunches, minimumAppInstalledDays, minimumAppLaunchesSinceRateLater, minimumDaysSinceRateLater} =
@@ -69,29 +72,27 @@ const useRuleManager = () => {
     return true;
   };
 
-  const setRateLater = async () => {
+  const updateStorage = async param => {
     let storageValue = await getRNAppRatingStorageValue();
-    storageValue = {
-      ...storageValue,
-      rateLater: true,
-      rateLaterOn: moment.utc().valueOf(),
-      rateLaterClicks: storageValue.rateLaterClicks + 1,
-    };
+    const additionalParams = param?.rateLater
+      ? {rateLaterOn: moment.utc().valueOf(), rateLaterClicks: storageValue.rateLaterClicks + 1}
+      : {};
+    storageValue = {...storageValue, ...param, ...additionalParams};
     await setRNAppRatingStorageValue(storageValue);
   };
 
-  const setRateNever = async () => {
-    let storageValue = await getRNAppRatingStorageValue();
-    storageValue = {...storageValue, rateNever: true};
-    await setRNAppRatingStorageValue(storageValue);
-  };
+  const setRateLater = () => updateStorage({rateLater: true});
+
+  const setRateNever = () => updateStorage({rateNever: true});
+
+  const setRatingGiven = () => updateStorage({ratingGiven: true});
 
   const canShowRateNever = async () => {
     const storageValue = await getRNAppRatingStorageValue();
     return storageValue.rateLaterClicks >= rules.minimumRateLaterClicksToShowRateNever;
   };
 
-  return {initRNAppRatingStorage, rulesSatisfied, setRateLater, setRateNever, canShowRateNever};
+  return {initRNAppRatingStorage, rulesSatisfied, setRateLater, setRateNever, setRatingGiven, canShowRateNever};
 };
 
 export default useRuleManager;

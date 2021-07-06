@@ -9,17 +9,19 @@ const RNAppRatingProvider = props => {
   const {children} = props;
   const initialCallback = _ => {};
   const [showRNAppRating, setShowRNAppRating] = useState(false);
-  // TODO: Extract stage to it's own factory which would handle stage specific updates and transitions
   // TODO: Add a thank you stage
   const [stage, setStage] = useState(RATING);
   const [config, setConfig] = useState(DEFAULT_CONFIG);
   const appRatingResponse = useRef(INITIAL_APP_RATING_RESPONSE);
   const journeyCompletionCallback = useRef(initialCallback);
-  const {setRateLater, setRateNever} = useRuleManager();
+  const {setRateLater, setRateNever, setRatingGiven} = useRuleManager();
 
   useEffect(() => {
     if (showRNAppRating) resetState();
-    else journeyCompletionCallback.current(appRatingResponse.current);
+    else {
+      journeyCompletionCallback.current(appRatingResponse.current);
+      // TODO: if (appRatingResponse.current.optedForStoreRating) open native in-app rating popup
+    }
   }, [showRNAppRating]);
 
   const setJourneyCompletionCallback = (callback = initialCallback) => (journeyCompletionCallback.current = callback);
@@ -30,34 +32,46 @@ const RNAppRatingProvider = props => {
   };
 
   // TODO: Do not show app rating popup again, if journey has completed with a rating and feedback
-  const fireActionEvent = (actionEvent, param = {}) => {
-    switch (actionEvent) {
-      case ACTION_EVENT.SUBMIT:
-        appRatingResponse.current = {...appRatingResponse.current, ...param};
-        if (stage === RATING) {
-          if (param?.rating >= config.rating.positiveRatingThreshold) {
-            if (config.storeRatingConfirmation.skipStage) {
-              appRatingResponse.current = {
-                ...appRatingResponse.current,
-                optedForStoreRating: true,
-              };
-              setShowRNAppRating(false);
-              // TODO: open native in-app rating popup
-              return;
-            }
-            setStage(STORE_RATING_CONFIRMATION);
-          } else setStage(FEEDBACK);
-          return;
-        } else {
-          if (stage === STORE_RATING_CONFIRMATION) {
+  const handleStageSubmission = (currentStage, param) => {
+    appRatingResponse.current = {...appRatingResponse.current, ...param};
+    switch (currentStage) {
+      case RATING:
+        if (param.rating >= config.rating.positiveRatingThreshold) {
+          if (config.storeRatingConfirmation.skipStage) {
             appRatingResponse.current = {
               ...appRatingResponse.current,
               optedForStoreRating: true,
             };
-            // TODO: open native in-app rating popup
+            setShowRNAppRating(false);
+            setRatingGiven().then(() => {});
+            return;
           }
-          setShowRNAppRating(false);
+          setStage(STORE_RATING_CONFIRMATION);
+          return;
         }
+        setStage(FEEDBACK);
+        return;
+      case FEEDBACK:
+        setShowRNAppRating(false);
+        setRatingGiven().then(() => {});
+        return;
+      case STORE_RATING_CONFIRMATION:
+        appRatingResponse.current = {
+          ...appRatingResponse.current,
+          optedForStoreRating: true,
+        };
+        setShowRNAppRating(false);
+        setRatingGiven().then(() => {});
+        return;
+      default:
+        return;
+    }
+  };
+
+  const fireActionEvent = (actionEvent, param = {}) => {
+    switch (actionEvent) {
+      case ACTION_EVENT.SUBMIT:
+        handleStageSubmission(stage, param);
         return;
       case ACTION_EVENT.RATE_LATER:
         appRatingResponse.current = {
@@ -84,14 +98,15 @@ const RNAppRatingProvider = props => {
     }
   };
 
-  const loadCustomRNAppRatingConfig = (customConfig = {}) => {
+  const loadCustomConfig = (customConfig = {}) => {
+    const {rating = {}, feedback = {}, storeRatingConfirmation = {}} = customConfig;
     const tempConfig = {
       ...config,
-      rating: {...config.rating, ...customConfig.rating},
-      feedback: {...config.feedback, ...customConfig.feedback},
+      rating: {...config.rating, ...rating},
+      feedback: {...config.feedback, ...feedback},
       storeRatingConfirmation: {
         ...config.storeRatingConfirmation,
-        ...customConfig.storeRatingConfirmation,
+        ...storeRatingConfirmation,
       },
     };
     setConfig(tempConfig);
@@ -107,7 +122,7 @@ const RNAppRatingProvider = props => {
         stage,
         fireActionEvent,
         setJourneyCompletionCallback,
-        loadCustomRNAppRatingConfig,
+        loadCustomConfig,
         loadCustomRules,
         config,
       }}>

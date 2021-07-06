@@ -224,6 +224,18 @@ describe('useRuleManager tests', () => {
       expect(res).toBeFalsy();
     });
 
+    it('should return false if initialisation was not done and storage value is null', async () => {
+      mockGetFromStorage.mockImplementation(() => Promise.resolve());
+
+      const {result} = renderHook(useRuleManager, {wrapper});
+
+      const res = await result.current.rulesSatisfied();
+
+      expect(mockGetFromStorage).toHaveBeenCalledTimes(1);
+      expect(mockGetFromStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY);
+      expect(res).toBeFalsy();
+    });
+
     it('should return false, when rateNever=true', async () => {
       const storageValue = {
         rateNever: true,
@@ -239,8 +251,11 @@ describe('useRuleManager tests', () => {
       expect(res).toBeFalsy();
     });
 
-    it('should return true if initialisation was not done and storage value is null', async () => {
-      mockGetFromStorage.mockImplementation(() => Promise.resolve());
+    it('should return false, when ratingGiven=true', async () => {
+      const storageValue = {
+        ratingGiven: true,
+      };
+      mockGetFromStorage.mockImplementation(() => Promise.resolve(storageValue));
 
       const {result} = renderHook(useRuleManager, {wrapper});
 
@@ -286,6 +301,24 @@ describe('useRuleManager tests', () => {
       expect(mockSaveInStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY, {
         ...INITIAL_RN_APP_RATING_STORAGE_VALUE,
         rateNever: true,
+      });
+    });
+  });
+
+  describe('setRatingGiven', () => {
+    it('should set ratingGiven=true', async () => {
+      mockGetFromStorage.mockImplementation(() => Promise.resolve(INITIAL_RN_APP_RATING_STORAGE_VALUE));
+
+      const {result} = renderHook(useRuleManager, {wrapper});
+
+      await result.current.setRatingGiven();
+
+      expect(mockGetFromStorage).toHaveBeenCalledTimes(1);
+      expect(mockGetFromStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY);
+      expect(mockSaveInStorage).toHaveBeenCalledTimes(1);
+      expect(mockSaveInStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY, {
+        ...INITIAL_RN_APP_RATING_STORAGE_VALUE,
+        ratingGiven: true,
       });
     });
   });

@@ -25,6 +25,7 @@
     "react/prop-types": "off",
     "arrow-parens": "off",
     "indent": "off",
-    "new-cap": "off"
+    "new-cap": "off",
+    "operator-linebreak": "off"
   }
 }
