@@ -28,9 +28,6 @@ const useRuleManager = () => {
       return await getRNAppRatingStorageValue();
     }
 
-    // Return if rateNever=true or ratingGiven=true
-    if (storageValue?.rateNever || storageValue?.ratingGiven) return;
-
     // update values
     const {launchTimes, rateLater, launchTimesPostRateLater, rateLaterOn} = storageValue;
     const {minimumAppLaunchesSinceRateLater, minimumDaysSinceRateLater} = rules;
