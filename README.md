@@ -1,5 +1,13 @@
 # rn-app-rating
 
+## WIP
+```
+TODO:
+1. Native in-app rating dialog for android
+2. Native in-app rating dialog for iOS
+3. Thank you stage
+```
+
 ## About
 An easy to use in-app rating design that allows collection of rating score and feedback
 from the user. Designed to encourage users with positive experience to rate your
@@ -114,7 +122,8 @@ rule validation.
   "minimumAppInstalledDays": 5,
   "minimumAppLaunchesSinceRateLater": 5,
   "minimumDaysSinceRateLater": 3,
-  "minimumRateLaterClicksToShowRateNever": 3
+  "minimumRateLaterClicksToShowRateNever": 3,
+  "debug": false
 }
 ```
 
@@ -127,6 +136,8 @@ rule validation.
 `minimumDaysSinceRateLater` Minimum number of days expired, since rate later click, before showing rating popup
 
 `minimumRateLaterClicksToShowRateNever` Minimum rate later clicks required to show rate never option
+
+`debug` Enable debug mode to ignore all rule validations and storage updates, and always open popup (along with logs)
 
 ### Custom rules
 Custom rules can be configured by passing them to **initRNAppRating** at the time of initialisation.
@@ -141,6 +152,7 @@ const customRules = {
   minimumAppLaunchesSinceRateLater: 3,
   minimumDaysSinceRateLater: 4,
   minimumRateLaterClicksToShowRateNever: 3,
+  debug: false
 };
 
 initRNAppRating(customRules);

@@ -3,9 +3,11 @@ import {INITIAL_RN_APP_RATING_STORAGE_VALUE, RN_APP_RATING_STORAGE_KEY} from '..
 import {useContext} from 'react';
 import {RNAppRatingContext} from '../../provider';
 import moment from 'moment';
+import useLogger from '../useLogger/useLogger';
 
 const useRuleManager = () => {
   const {getFromStorage, saveInStorage} = StorageHelper();
+  const {log} = useLogger();
   const {
     config: {rules},
   } = useContext(RNAppRatingContext);
@@ -20,35 +22,55 @@ const useRuleManager = () => {
   };
 
   const initRNAppRatingStorage = async () => {
+    log('initRNAppRating: start');
     let storageValue = await getRNAppRatingStorageValue();
 
     // initialise values
     if (!storageValue) {
+      log('initRNAppRating: no storage values found, initialising...');
       await setRNAppRatingStorageValue(INITIAL_RN_APP_RATING_STORAGE_VALUE);
       return await getRNAppRatingStorageValue();
     }
 
-    // update values
+    // update values only if debug is disabled
+    const {debug} = rules;
     const {launchTimes, rateLater, launchTimesPostRateLater, rateLaterOn} = storageValue;
     const {minimumAppLaunchesSinceRateLater, minimumDaysSinceRateLater} = rules;
     storageValue = {...storageValue, launchTimes: launchTimes + 1};
     if (rateLater) {
+      log('initRNAppRating: rateLater=true');
       const currentLaunchTimesPostRateLater = launchTimesPostRateLater + 1;
       if (
         currentLaunchTimesPostRateLater >= minimumAppLaunchesSinceRateLater &&
         daysElapsed(rateLaterOn) >= minimumDaysSinceRateLater
       ) {
-        storageValue = {...storageValue, rateLater: false, launchTimesPostRateLater: 0, rateLaterOn: null};
+        log('initRNAppRating: rate later rules satisfied');
+        storageValue = {
+          ...storageValue,
+          rateLater: false,
+          launchTimesPostRateLater: 0,
+          rateLaterOn: null,
+        };
       } else {
-        storageValue = {...storageValue, launchTimesPostRateLater: currentLaunchTimesPostRateLater};
+        log('initRNAppRating: rate later rules not satisfied');
+        storageValue = {
+          ...storageValue,
+          launchTimesPostRateLater: currentLaunchTimesPostRateLater,
+        };
       }
     }
+    if (!debug) await setRNAppRatingStorageValue(storageValue);
 
-    await setRNAppRatingStorageValue(storageValue);
+    log('initRNAppRating: done');
     return storageValue;
   };
 
   const rulesSatisfied = async () => {
+    const {debug} = rules;
+    // Return true if debug is enabled
+    log('showRNAppRating: check rules');
+    if (debug) return true;
+
     const storageValue = await getRNAppRatingStorageValue();
     // Return false if not value is found in storage or rateNever=true or ratingGiven=true
     if (!storageValue || storageValue?.rateNever || storageValue?.ratingGiven) return false;
@@ -66,10 +88,14 @@ const useRuleManager = () => {
     if (launchTimes < minimumAppLaunches || daysElapsed(installedOn) < minimumAppInstalledDays) {
       return false;
     }
+
     return true;
   };
 
   const updateStorage = async param => {
+    // Do not update if debug is enabled
+    if (rules?.debug) return;
+
     let storageValue = await getRNAppRatingStorageValue();
     const additionalParams = param?.rateLater
       ? {rateLaterOn: moment.utc().valueOf(), rateLaterClicks: storageValue.rateLaterClicks + 1}
@@ -85,6 +111,9 @@ const useRuleManager = () => {
   const setRatingGiven = () => updateStorage({ratingGiven: true});
 
   const canShowRateNever = async () => {
+    // Do not update if debug is enabled
+    if (rules?.debug) return true;
+
     const storageValue = await getRNAppRatingStorageValue();
     return storageValue.rateLaterClicks >= rules.minimumRateLaterClicksToShowRateNever;
   };

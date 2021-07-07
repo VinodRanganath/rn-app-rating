@@ -9,8 +9,8 @@ const initialState = {
   fireActionEvent: _ => {},
   setAppRatingResponse: _ => {},
   setJourneyCompletionCallback: _ => {},
-  loadCustomConfig: _ => {},
-  loadCustomRules: _ => {},
+  setCustomConfig: _ => {},
+  setCustomRules: _ => {},
   config: DEFAULT_CONFIG,
 };
 const RNAppRatingContext = createContext(initialState);

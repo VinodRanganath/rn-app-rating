@@ -4,6 +4,7 @@ import {RNAppRatingContext} from './RNAppRatingContext';
 import {ACTION_EVENT, FEEDBACK, INITIAL_APP_RATING_RESPONSE, RATING, STORE_RATING_CONFIRMATION} from '../constants';
 import DEFAULT_CONFIG from '../config/Config';
 import useRuleManager from '../hooks/useRuleManager/useRuleManager';
+import useLogger from '../hooks/useLogger/useLogger';
 
 const RNAppRatingProvider = props => {
   const {children} = props;
@@ -15,12 +16,17 @@ const RNAppRatingProvider = props => {
   const appRatingResponse = useRef(INITIAL_APP_RATING_RESPONSE);
   const journeyCompletionCallback = useRef(initialCallback);
   const {setRateLater, setRateNever, setRatingGiven} = useRuleManager();
+  const {log} = useLogger();
 
   useEffect(() => {
     if (showRNAppRating) resetState();
     else {
+      log('triggerActionEvent: hide: invoke callback with response');
       journeyCompletionCallback.current(appRatingResponse.current);
-      // TODO: if (appRatingResponse.current.optedForStoreRating) open native in-app rating popup
+      if (appRatingResponse.current.optedForStoreRating) {
+        log('triggerActionEvent: open in-app rating');
+        // TODO: open native in-app rating popup
+      }
     }
   }, [showRNAppRating]);
 
@@ -31,13 +37,14 @@ const RNAppRatingProvider = props => {
     appRatingResponse.current = INITIAL_APP_RATING_RESPONSE;
   };
 
-  // TODO: Do not show app rating popup again, if journey has completed with a rating and feedback
   const handleStageSubmission = (currentStage, param) => {
     appRatingResponse.current = {...appRatingResponse.current, ...param};
     switch (currentStage) {
       case RATING:
+        log('triggerActionEvent: SUBMIT on RATING stage');
         if (param.rating >= config.rating.positiveRatingThreshold) {
           if (config.storeRatingConfirmation.skipStage) {
+            log('triggerActionEvent: storeRatingConfirmation.skipStage=true');
             appRatingResponse.current = {
               ...appRatingResponse.current,
               optedForStoreRating: true,
@@ -46,16 +53,20 @@ const RNAppRatingProvider = props => {
             setRatingGiven().then(() => {});
             return;
           }
+          log('triggerActionEvent: RATING to STORE_RATING_CONFIRMATION');
           setStage(STORE_RATING_CONFIRMATION);
           return;
         }
+        log('triggerActionEvent: RATING to FEEDBACK');
         setStage(FEEDBACK);
         return;
       case FEEDBACK:
+        log('triggerActionEvent: SUBMIT on FEEDBACK');
         setShowRNAppRating(false);
         setRatingGiven().then(() => {});
         return;
       case STORE_RATING_CONFIRMATION:
+        log('triggerActionEvent: SUBMIT on STORE_RATING_CONFIRMATION');
         appRatingResponse.current = {
           ...appRatingResponse.current,
           optedForStoreRating: true,
@@ -74,6 +85,7 @@ const RNAppRatingProvider = props => {
         handleStageSubmission(stage, param);
         return;
       case ACTION_EVENT.RATE_LATER:
+        log('triggerActionEvent: RATE_LATER');
         appRatingResponse.current = {
           ...appRatingResponse.current,
           rateLater: true,
@@ -82,6 +94,7 @@ const RNAppRatingProvider = props => {
         setRateLater().then(() => {});
         return;
       case ACTION_EVENT.RATE_NEVER:
+        log('triggerActionEvent: RATE_NEVER');
         appRatingResponse.current = {
           ...appRatingResponse.current,
           rateNever: true,
@@ -90,6 +103,7 @@ const RNAppRatingProvider = props => {
         setRateNever().then(() => {});
         return;
       case ACTION_EVENT.CANCEL:
+        log('triggerActionEvent: CANCEL');
         appRatingResponse.current = {...appRatingResponse.current, ...param};
         setShowRNAppRating(false);
         return;
@@ -98,7 +112,8 @@ const RNAppRatingProvider = props => {
     }
   };
 
-  const loadCustomConfig = (customConfig = {}) => {
+  const setCustomConfig = (customConfig = {}) => {
+    log('showRNAppRating: set custom config');
     const {rating = {}, feedback = {}, storeRatingConfirmation = {}} = customConfig;
     const tempConfig = {
       ...config,
@@ -112,7 +127,10 @@ const RNAppRatingProvider = props => {
     setConfig(tempConfig);
   };
 
-  const loadCustomRules = (customRules = {}) => setConfig({...config, rules: {...config.rules, ...customRules}});
+  const setCustomRules = (customRules = {}) => {
+    log('initRNAppRating: set custom rules');
+    setConfig({...config, rules: {...config.rules, ...customRules}});
+  };
 
   return (
     <RNAppRatingContext.Provider
@@ -122,8 +140,8 @@ const RNAppRatingProvider = props => {
         stage,
         fireActionEvent,
         setJourneyCompletionCallback,
-        loadCustomConfig,
-        loadCustomRules,
+        setCustomConfig,
+        setCustomRules,
         config,
       }}>
       {children}

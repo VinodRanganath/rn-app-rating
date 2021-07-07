@@ -43,7 +43,15 @@ const DEFAULT_RULES = {
   minimumAppLaunchesSinceRateLater: 5,
   minimumDaysSinceRateLater: 3,
   minimumRateLaterClicksToShowRateNever: 3,
+  debug: false,
 };
+
+// log levels
+const LOG_LEVELS = {
+  DEBUG: 'DEBUG',
+  ERROR: 'ERROR',
+};
+const LOG_PREFIX = 'rn-app-rating';
 
 const RATING_VALUE = {
   ONE: 1,
@@ -74,6 +82,8 @@ export {
   RN_APP_RATING_STORAGE_KEY,
   INITIAL_RN_APP_RATING_STORAGE_VALUE,
   DEFAULT_RULES,
+  LOG_LEVELS,
+  LOG_PREFIX,
   RATING_VALUE,
   POSITIVE_RATING_THRESHOLD,
   INITIAL_APP_RATING_RESPONSE,

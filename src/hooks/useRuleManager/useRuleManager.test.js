@@ -8,7 +8,7 @@ import moment from 'moment';
 
 const mockGetFromStorage = jest.fn();
 const mockSaveInStorage = jest.fn().mockImplementation(() => Promise.resolve());
-const wrapper = ({children}) => {
+const wrapper = ({debug, children}) => {
   const config = {
     ...DEFAULT_CONFIG,
     rules: {
@@ -17,6 +17,7 @@ const wrapper = ({children}) => {
       minimumAppLaunchesSinceRateLater: 1,
       minimumDaysSinceRateLater: 1,
       minimumRateLaterClicksToShowRateNever: 2,
+      debug,
     },
   };
 
@@ -50,6 +51,19 @@ describe('useRuleManager tests', () => {
       );
       expect(mockGetFromStorage).toHaveBeenNthCalledWith(2, RN_APP_RATING_STORAGE_KEY);
       expect(res).toStrictEqual(INITIAL_RN_APP_RATING_STORAGE_VALUE);
+    });
+
+    it('should not update launch times, if value is already present and debug=true', async () => {
+      mockGetFromStorage.mockImplementation(() => Promise.resolve(INITIAL_RN_APP_RATING_STORAGE_VALUE));
+
+      const {result} = renderHook(useRuleManager, {wrapper, initialProps: {debug: true}});
+
+      const res = await result.current.initRNAppRatingStorage();
+
+      expect(mockGetFromStorage).toHaveBeenCalledTimes(1);
+      expect(mockGetFromStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY);
+      expect(mockSaveInStorage).toHaveBeenCalledTimes(0);
+      expect(res).toStrictEqual({...INITIAL_RN_APP_RATING_STORAGE_VALUE, launchTimes: 1});
     });
 
     it('should update launch times and store value, if value is already present', async () => {
@@ -153,6 +167,15 @@ describe('useRuleManager tests', () => {
 
       expect(mockGetFromStorage).toHaveBeenCalledTimes(1);
       expect(mockGetFromStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY);
+      expect(res).toBeTruthy();
+    });
+
+    it('should return true if debug=true', async () => {
+      const {result} = renderHook(useRuleManager, {wrapper, initialProps: {debug: true}});
+
+      const res = await result.current.rulesSatisfied();
+
+      expect(mockGetFromStorage).toHaveBeenCalledTimes(0);
       expect(res).toBeTruthy();
     });
 
@@ -285,6 +308,15 @@ describe('useRuleManager tests', () => {
         rateLaterClicks: INITIAL_RN_APP_RATING_STORAGE_VALUE.rateLaterClicks + 1,
       });
     });
+
+    it('should not set rateLater, rateLaterOn or rateLaterClicks if debug=true', async () => {
+      const {result} = renderHook(useRuleManager, {wrapper, initialProps: {debug: true}});
+
+      await result.current.setRateLater();
+
+      expect(mockGetFromStorage).toHaveBeenCalledTimes(0);
+      expect(mockSaveInStorage).toHaveBeenCalledTimes(0);
+    });
   });
 
   describe('setRateNever', () => {
@@ -303,6 +335,15 @@ describe('useRuleManager tests', () => {
         rateNever: true,
       });
     });
+
+    it('should not set rateNever if debug=true', async () => {
+      const {result} = renderHook(useRuleManager, {wrapper, initialProps: {debug: true}});
+
+      await result.current.setRateNever();
+
+      expect(mockGetFromStorage).toHaveBeenCalledTimes(0);
+      expect(mockSaveInStorage).toHaveBeenCalledTimes(0);
+    });
   });
 
   describe('setRatingGiven', () => {
@@ -320,6 +361,15 @@ describe('useRuleManager tests', () => {
         ...INITIAL_RN_APP_RATING_STORAGE_VALUE,
         ratingGiven: true,
       });
+    });
+
+    it('should not set ratingGiven if debug=true', async () => {
+      const {result} = renderHook(useRuleManager, {wrapper, initialProps: {debug: true}});
+
+      await result.current.setRatingGiven();
+
+      expect(mockGetFromStorage).toHaveBeenCalledTimes(0);
+      expect(mockSaveInStorage).toHaveBeenCalledTimes(0);
     });
   });
 

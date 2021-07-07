@@ -7,8 +7,8 @@ import {ACTION_EVENT} from '../../constants';
 const mockSetShowRNAppRating = jest.fn();
 const mockFireActionEvent = jest.fn();
 const mockSetJourneyCompletionCallback = jest.fn();
-const mockLoadCustomConfig = jest.fn();
-const mockLoadCustomRules = jest.fn();
+const mockSetCustomConfig = jest.fn();
+const mockSetCustomRules = jest.fn();
 const mockInitRNAppRatingStorage = jest.fn();
 const mockRulesSatisfied = jest.fn();
 const mockCanShowRateNever = jest.fn();
@@ -18,8 +18,8 @@ const wrapper = ({children}) => (
       setShowRNAppRating: mockSetShowRNAppRating,
       fireActionEvent: mockFireActionEvent,
       setJourneyCompletionCallback: mockSetJourneyCompletionCallback,
-      loadCustomConfig: mockLoadCustomConfig,
-      loadCustomRules: mockLoadCustomRules,
+      setCustomConfig: mockSetCustomConfig,
+      setCustomRules: mockSetCustomRules,
     }}>
     {children}
   </RNAppRatingContext.Provider>
@@ -46,8 +46,8 @@ describe('RNAppRating tests', () => {
       const res = await result.current.initRNAppRating(customRules);
 
       expect(res).toStrictEqual({launchTimes: 1});
-      expect(mockLoadCustomRules).toHaveBeenCalledTimes(1);
-      expect(mockLoadCustomRules).toHaveBeenNthCalledWith(1, customRules);
+      expect(mockSetCustomRules).toHaveBeenCalledTimes(1);
+      expect(mockSetCustomRules).toHaveBeenNthCalledWith(1, customRules);
     });
   });
 
@@ -65,8 +65,8 @@ describe('RNAppRating tests', () => {
       expect(mockSetShowRNAppRating).toHaveBeenNthCalledWith(1, true);
       expect(mockSetJourneyCompletionCallback).toHaveBeenCalledTimes(1);
       expect(mockSetJourneyCompletionCallback).toHaveBeenNthCalledWith(1, customCallback);
-      expect(mockLoadCustomConfig).toHaveBeenCalledTimes(1);
-      expect(mockLoadCustomConfig).toHaveBeenNthCalledWith(1, customConfig);
+      expect(mockSetCustomConfig).toHaveBeenCalledTimes(1);
+      expect(mockSetCustomConfig).toHaveBeenNthCalledWith(1, customConfig);
     });
 
     it('should not show app rating, when showRNAppRatingPrompt is called and rules are not satisfied', async () => {
@@ -78,7 +78,7 @@ describe('RNAppRating tests', () => {
       expect(res).toBeFalsy();
       expect(mockSetShowRNAppRating).toHaveBeenCalledTimes(0);
       expect(mockSetJourneyCompletionCallback).toHaveBeenCalledTimes(0);
-      expect(mockLoadCustomConfig).toHaveBeenCalledTimes(0);
+      expect(mockSetCustomConfig).toHaveBeenCalledTimes(0);
     });
   });
 

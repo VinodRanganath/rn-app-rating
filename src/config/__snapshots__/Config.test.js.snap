@@ -89,6 +89,7 @@ Object {
     },
   },
   "rules": Object {
+    "debug": false,
     "minimumAppInstalledDays": 5,
     "minimumAppLaunches": 7,
     "minimumAppLaunchesSinceRateLater": 5,

@@ -17,8 +17,8 @@ const MockConsumerComponent = () => {
     stage,
     fireActionEvent,
     setJourneyCompletionCallback,
-    loadCustomConfig,
-    loadCustomRules,
+    setCustomConfig,
+    setCustomRules,
     config,
   } = useContext(RNAppRatingContext);
 
@@ -31,8 +31,8 @@ const MockConsumerComponent = () => {
       onSetShowRNAppRating={show => setShowRNAppRating(show)}
       onSetCallback={() => setJourneyCompletionCallback(mockCallback)}
       onFireEvent={(event, param) => fireActionEvent(event, param)}
-      onLoadCustomRules={customRules => loadCustomRules(customRules)}
-      onLoadCustomConfig={customConfig => loadCustomConfig(customConfig)}
+      onSetCustomRules={customRules => setCustomRules(customRules)}
+      onSetCustomConfig={customConfig => setCustomConfig(customConfig)}
     />
   );
 };
@@ -153,7 +153,7 @@ describe('RNAppRatingProvider tests', () => {
         fireEvent(mockComponent, 'onSetShowRNAppRating', true);
         expect(mockComponent.props.stage).toEqual(RATING);
         // set skipStage=true
-        fireEvent(mockComponent, 'onLoadCustomConfig', {storeRatingConfirmation: {skipStage: true}});
+        fireEvent(mockComponent, 'onSetCustomConfig', {storeRatingConfirmation: {skipStage: true}});
         // set callback
         fireEvent(mockComponent, 'onSetCallback');
         // submit rating
@@ -343,7 +343,7 @@ describe('RNAppRatingProvider tests', () => {
     });
   });
 
-  describe('loadCustomConfig', () => {
+  describe('setCustomConfig', () => {
     it('should load custom config if given', () => {
       const {rating} = DEFAULT_CONFIG;
 
@@ -353,12 +353,12 @@ describe('RNAppRatingProvider tests', () => {
 
       expect(mockComponent.props.config).toStrictEqual(DEFAULT_CONFIG);
       // load custom config
-      fireEvent(mockComponent, 'onLoadCustomConfig', {rating: {title: 'custom title'}});
+      fireEvent(mockComponent, 'onSetCustomConfig', {rating: {title: 'custom title'}});
       expect(mockComponent.props.config).toStrictEqual({...DEFAULT_CONFIG, rating: {...rating, title: 'custom title'}});
     });
   });
 
-  describe('loadCustomRules', () => {
+  describe('setCustomRules', () => {
     it('should load custom rules if given', () => {
       const {rules} = DEFAULT_CONFIG;
 
@@ -368,7 +368,7 @@ describe('RNAppRatingProvider tests', () => {
 
       expect(mockComponent.props.config).toStrictEqual(DEFAULT_CONFIG);
       // load custom rules
-      fireEvent(mockComponent, 'onLoadCustomRules', {minimumAppLaunches: 4});
+      fireEvent(mockComponent, 'onSetCustomRules', {minimumAppLaunches: 4});
       expect(mockComponent.props.config).toStrictEqual({...DEFAULT_CONFIG, rules: {...rules, minimumAppLaunches: 4}});
     });
   });
