@@ -8,9 +8,9 @@ const ActionBar = props => {
   const {
     config = {},
     showRateNever,
-    onPositiveActionPress = () => {},
-    onNeutralActionPress = () => {},
-    onNegativeActionPress = () => {},
+    onPositiveActionPress = _ => {},
+    onNeutralActionPress = _ => {},
+    onNegativeActionPress = _ => {},
   } = props;
   const {stage} = useContext(RNAppRatingContext);
 

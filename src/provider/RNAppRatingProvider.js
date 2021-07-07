@@ -5,17 +5,18 @@ import {ACTION_EVENT, FEEDBACK, INITIAL_APP_RATING_RESPONSE, RATING, STORE_RATIN
 import DEFAULT_CONFIG from '../config/Config';
 import useRuleManager from '../hooks/useRuleManager/useRuleManager';
 import useLogger from '../hooks/useLogger/useLogger';
+import {NativeModules, Platform} from 'react-native';
 
 const RNAppRatingProvider = props => {
   const {children} = props;
   const initialCallback = _ => {};
   const [showRNAppRating, setShowRNAppRating] = useState(false);
-  // TODO: Add a thank you stage
   const [stage, setStage] = useState(RATING);
   const [config, setConfig] = useState(DEFAULT_CONFIG);
   const appRatingResponse = useRef(INITIAL_APP_RATING_RESPONSE);
   const journeyCompletionCallback = useRef(initialCallback);
   const {setRateLater, setRateNever, setRatingGiven} = useRuleManager();
+  const {RnAppRating} = NativeModules;
   const {log} = useLogger();
 
   useEffect(() => {
@@ -24,8 +25,13 @@ const RNAppRatingProvider = props => {
       log('triggerActionEvent: hide: invoke callback with response');
       journeyCompletionCallback.current(appRatingResponse.current);
       if (appRatingResponse.current.optedForStoreRating) {
-        log('triggerActionEvent: open in-app rating');
-        // TODO: open native in-app rating popup
+        if (Platform.OS === 'android') {
+          log('triggerActionEvent: open in-app rating for android');
+          if (!config?.rules?.debug) RnAppRating.showInAppReview().then(_ => {});
+        } else if (Platform.OS === 'ios') {
+          log('triggerActionEvent: open in-app rating for iOS');
+          // TODO: open native in-app rating popup for ios
+        }
       }
     }
   }, [showRNAppRating]);
@@ -50,7 +56,7 @@ const RNAppRatingProvider = props => {
               optedForStoreRating: true,
             };
             setShowRNAppRating(false);
-            setRatingGiven().then(() => {});
+            setRatingGiven().then(_ => {});
             return;
           }
           log('triggerActionEvent: RATING to STORE_RATING_CONFIRMATION');
@@ -63,7 +69,7 @@ const RNAppRatingProvider = props => {
       case FEEDBACK:
         log('triggerActionEvent: SUBMIT on FEEDBACK');
         setShowRNAppRating(false);
-        setRatingGiven().then(() => {});
+        setRatingGiven().then(_ => {});
         return;
       case STORE_RATING_CONFIRMATION:
         log('triggerActionEvent: SUBMIT on STORE_RATING_CONFIRMATION');
@@ -72,7 +78,7 @@ const RNAppRatingProvider = props => {
           optedForStoreRating: true,
         };
         setShowRNAppRating(false);
-        setRatingGiven().then(() => {});
+        setRatingGiven().then(_ => {});
         return;
       default:
         return;
@@ -91,7 +97,7 @@ const RNAppRatingProvider = props => {
           rateLater: true,
         };
         setShowRNAppRating(false);
-        setRateLater().then(() => {});
+        setRateLater().then(_ => {});
         return;
       case ACTION_EVENT.RATE_NEVER:
         log('triggerActionEvent: RATE_NEVER');
@@ -100,7 +106,7 @@ const RNAppRatingProvider = props => {
           rateNever: true,
         };
         setShowRNAppRating(false);
-        setRateNever().then(() => {});
+        setRateNever().then(_ => {});
         return;
       case ACTION_EVENT.CANCEL:
         log('triggerActionEvent: CANCEL');

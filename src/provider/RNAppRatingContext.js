@@ -4,7 +4,7 @@ import DEFAULT_CONFIG from '../config/Config';
 
 const initialState = {
   showRNAppRating: false,
-  setShowRNAppRating: () => {},
+  setShowRNAppRating: _ => {},
   stage: RATING,
   fireActionEvent: _ => {},
   setAppRatingResponse: _ => {},

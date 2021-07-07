@@ -1,5 +1,3 @@
-// RnAppRatingPackage.java
-
 package com.reactlibrary;
 
 import java.util.Arrays;

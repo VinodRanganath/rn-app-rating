@@ -51,6 +51,7 @@ const AppRating = () => {
     />
   );
 
+  // TODO: Add a thank you stage
   const renderStage = () => {
     switch (stage) {
       case RATING:

@@ -12,7 +12,7 @@ const wrapper = ({debug, children}) => {
 
 describe('Logger tests', () => {
   it('should log message at DEBUG level by default, if debug is enabled', () => {
-    const spy = jest.spyOn(console, 'debug').mockImplementation(() => {});
+    const spy = jest.spyOn(console, 'debug').mockImplementation(_ => {});
 
     const {result} = renderHook(useLogger, {wrapper, initialProps: {debug: true}});
 
@@ -25,7 +25,7 @@ describe('Logger tests', () => {
   });
 
   it('should log message at DEBUG level, if log level is DEBUG and debug is enabled', () => {
-    const spy = jest.spyOn(console, 'debug').mockImplementation(() => {});
+    const spy = jest.spyOn(console, 'debug').mockImplementation(_ => {});
 
     const {result} = renderHook(useLogger, {wrapper, initialProps: {debug: true}});
 
@@ -38,7 +38,7 @@ describe('Logger tests', () => {
   });
 
   it('should log message at ERROR level, if log level is ERROR and debug is enabled', () => {
-    const spy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const spy = jest.spyOn(console, 'error').mockImplementation(_ => {});
 
     const {result} = renderHook(useLogger, {wrapper, initialProps: {debug: true}});
 
@@ -51,7 +51,7 @@ describe('Logger tests', () => {
   });
 
   it('should log message at ERROR level, if log level is ERROR and debug is enabled', () => {
-    const spy = jest.spyOn(console, 'debug').mockImplementation(() => {});
+    const spy = jest.spyOn(console, 'debug').mockImplementation(_ => {});
 
     const {result} = renderHook(useLogger, {wrapper});
 
