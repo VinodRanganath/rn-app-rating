@@ -25,8 +25,12 @@ public class RnAppRatingModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void showInAppReview(Promise promise) {
+    public void showInAppReview(Boolean debug, Promise promise) {
     		try {
+						if (debug) {
+							promise.resolve(true);
+							return;
+						}
 						ReviewManager reviewManager = ReviewManagerFactory.create((AppCompatActivity) getCurrentActivity());
 
 						Task<ReviewInfo> request = reviewManager.requestReviewFlow();

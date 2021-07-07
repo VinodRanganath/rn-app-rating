@@ -90,6 +90,7 @@ const Styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: '#444',
     borderRadius: 10,
+    color: '#444',
   },
   actionSection: {
     flex: 1,

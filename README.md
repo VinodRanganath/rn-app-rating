@@ -3,9 +3,8 @@
 ## WIP
 ```
 TODO:
-1. Native in-app rating dialog for android
+1. Thank you stage
 2. Native in-app rating dialog for iOS
-3. Thank you stage
 ```
 
 ## About
@@ -171,16 +170,16 @@ There are 3 stages provided by the RNAppRating flow,
 3. Store Rating Confirmation
 
 At the end of the journey (popup close) the callback, that was passed to
-**showRNAppRating**, will be invoked with a response as below,
+**showRNAppRating**, will be invoked with a response type as below,
 
-```json
-{
-  "rating": 0,
-  "feedback": "",
-  "optedForStoreRating": false,
-  "rateLater": false,
-  "rateNever": false,
-  "journeyCancelled": false
+```typescript
+type CallbackResponse = {
+  rating: number,
+  feedback: string,
+  optedForStoreRating: boolean,
+  rateLater: boolean,
+  rateNever: boolean,
+  journeyCancelled: boolean
 }
 ```
 
@@ -204,7 +203,7 @@ to **showRNAppRating**, at the time of showing.
 The expected custom config format is as below,
 
 ```typescript
-type config = {
+type Config = {
     rating: {
         /**
          * Custom component to be rendered, instead of default rating component
@@ -212,39 +211,39 @@ type config = {
          */
         component: ReactElement,
         // Base64 image to be rendered
-        iconInBase64: String,
+        iconInBase64: string,
         // Style object for icon
-        iconStyle: Object,
+        iconStyle: object,
         // Title text
-        title: String,
+        title: string,
         // Style object for title text
-        titleStyle: Object,
+        titleStyle: object,
         // Subtitle text
-        subtitle: String,
+        subtitle: string,
         // Style object for subtitle text
-        subtitleStyle: Object,
+        subtitleStyle: object,
         // Number representing the positive rating threshold
-        positiveRatingThreshold: Number,
+        positiveRatingThreshold: number,
         // Base64 image of icon to be used in rating input
-        ratingIconInBase64: String,
+        ratingIconInBase64: string,
         // Style object for rating input icon
-        ratingIconStyle: Object,
+        ratingIconStyle: object,
         // Style object for fill colour of rating input icon on selection
-        ratingIconFillStyle: Object,
+        ratingIconFillStyle: object,
         // Enable/Disable show never button
-        showRateNever: Boolean,
+        showRateNever: boolean,
         // Positive button text
-        positiveButtonText: String,
+        positiveButtonText: string,
         // Style object for positive button text
-        positiveButtonTextStyle: Object,
+        positiveButtonTextStyle: object,
         // Neutral button text
-        neutralButtonText: String,
+        neutralButtonText: string,
         // Style object for neutral button text
-        neutralButtonTextStyle: Object,
+        neutralButtonTextStyle: object,
         // Negative button text
-        negativeButtonText: String,
+        negativeButtonText: string,
         // Style object for negative button text
-        negativeButtonTextStyle: Object,
+        negativeButtonTextStyle: object,
     },
     feedback: {
         /**
@@ -253,33 +252,33 @@ type config = {
          */
         component: ReactElement,
         // Base64 image to be rendered
-        iconInBase64: String,
+        iconInBase64: string,
         // Style object for icon
-        iconStyle: Object,
+        iconStyle: object,
         // Title text
-        title: String,
+        title: string,
         // Style object for title text
-        titleStyle: Object,
+        titleStyle: object,
         // Subtitle text
-        subtitle: String,
+        subtitle: string,
         // Style object for subtitle text
-        subtitleStyle: Object,
+        subtitleStyle: object,
         // Style object for input text area
-        feedbackInputStyle: Object,
+        feedbackInputStyle: object,
         // Placeholder text for input text area
-        feedbackInputPlaceholderText: String,
+        feedbackInputPlaceholderText: string,
         // Number of lines to be displayed in input text area
-        feedbackInputLines: Number,
+        feedbackInputLines: number,
         // Maximum character length allowed for feedback text input 
-        feedbackInputMaxLength: Number,
+        feedbackInputMaxLength: number,
         // Positive button text
-        positiveButtonText: String,
+        positiveButtonText: string,
         // Style object for positive button text
-        positiveButtonTextStyle: Object,
+        positiveButtonTextStyle: object,
         // Negative button text
-        negativeButtonText: String,
+        negativeButtonText: string,
         // Style object for negative button text
-        negativeButtonTextStyle: Object,
+        negativeButtonTextStyle: object,
     },
     storeRatingConfirmation: {
         /**
@@ -291,33 +290,33 @@ type config = {
          * Setting this flag to true will skip this stage and invoke the native in-app
          * store rating popup when a rating >= positiveRatingThreshold is submitted
          */
-        skipStage: Boolean,
+        skipStage: boolean,
         // Base64 image to be rendered
-        iconInBase64: String,
+        iconInBase64: string,
         // Style object for icon
-        iconStyle: Object,
+        iconStyle: object,
         // Title text
-        title: String,
+        title: string,
         // Style object for title text
-        titleStyle: Object,
+        titleStyle: object,
         // Subtitle text
-        subtitle: String,
+        subtitle: string,
         // Style object for subtitle text
-        subtitleStyle: Object,
+        subtitleStyle: object,
         // Enable/Disable show never button
-        showRateNever: Boolean,
+        showRateNever: boolean,
         // Positive button text
-        positiveButtonText: String,
+        positiveButtonText: string,
         // Style object for positive button text
-        positiveButtonTextStyle: Object,
+        positiveButtonTextStyle: object,
         // Neutral button text
-        neutralButtonText: String,
+        neutralButtonText: string,
         // Style object for neutral button text
-        neutralButtonTextStyle: Object,
+        neutralButtonTextStyle: object,
         // Negative button text
-        negativeButtonText: String,
+        negativeButtonText: string,
         // Style object for negative button text
-        negativeButtonTextStyle: Object,
+        negativeButtonTextStyle: object,
     }
 };
 ```

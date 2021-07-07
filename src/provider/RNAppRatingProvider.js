@@ -26,8 +26,10 @@ const RNAppRatingProvider = props => {
       journeyCompletionCallback.current(appRatingResponse.current);
       if (appRatingResponse.current.optedForStoreRating) {
         if (Platform.OS === 'android') {
-          log('triggerActionEvent: open in-app rating for android');
-          if (!config?.rules?.debug) RnAppRating.showInAppReview().then(_ => {});
+          log('triggerActionEvent: open in-app rating for android: start');
+          RnAppRating.showInAppReview(config?.rules?.debug).then(_ =>
+            log('triggerActionEvent: open in-app rating for android: done'),
+          );
         } else if (Platform.OS === 'ios') {
           log('triggerActionEvent: open in-app rating for iOS');
           // TODO: open native in-app rating popup for ios

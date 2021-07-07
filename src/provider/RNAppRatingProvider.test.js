@@ -172,7 +172,7 @@ describe('RNAppRatingProvider tests', () => {
         expect(mockSetRatingGiven).toHaveBeenCalledTimes(1);
       });
 
-      it('should open native android in-app review dialog, if event=SUBMIT, stage=RATING, rating>=positiveRatingThreshold, skipStage=true, OS=android and debug=false', () => {
+      it('should open native android in-app review dialog, if event=SUBMIT, stage=RATING, rating>=positiveRatingThreshold, skipStage=true and OS=android', () => {
         Platform.OS = 'android';
 
         const {getByTestId} = render(<MockConsumerWrapper />);
@@ -188,26 +188,6 @@ describe('RNAppRatingProvider tests', () => {
         // submit rating
         fireEvent(mockComponent, 'onFireEvent', ACTION_EVENT.SUBMIT, {rating: 4});
         expect(mockShowInAppReview).toHaveBeenCalledTimes(1);
-      });
-
-      it('should not open native android in-app review dialog, if event=SUBMIT, stage=RATING, rating>=positiveRatingThreshold, skipStage=true, OS=android and debug=true', () => {
-        Platform.OS = 'android';
-
-        const {getByTestId} = render(<MockConsumerWrapper />);
-
-        const mockComponent = getByTestId('mock-component');
-
-        // show
-        fireEvent(mockComponent, 'onSetShowRNAppRating', true);
-        // set debug=true
-        fireEvent(mockComponent, 'onSetCustomRules', {debug: true});
-        // set skipStage=true
-        fireEvent(mockComponent, 'onSetCustomConfig', {storeRatingConfirmation: {skipStage: true}});
-        // set callback
-        fireEvent(mockComponent, 'onSetCallback');
-        // submit rating
-        fireEvent(mockComponent, 'onFireEvent', ACTION_EVENT.SUBMIT, {rating: 4});
-        expect(mockShowInAppReview).toHaveBeenCalledTimes(0);
       });
 
       it('should hide popup, with appropriate response, if event=SUBMIT, stage=FEEDBACK', () => {
@@ -260,7 +240,7 @@ describe('RNAppRatingProvider tests', () => {
         expect(mockSetRatingGiven).toHaveBeenCalledTimes(1);
       });
 
-      it('should open native android in-app review dialog, if event=SUBMIT, stage=STORE_RATING_CONFIRMATION, OS=android and debug=false', () => {
+      it('should open native android in-app review dialog, if event=SUBMIT, stage=STORE_RATING_CONFIRMATION and OS=android', () => {
         Platform.OS = 'android';
 
         const {getByTestId} = render(<MockConsumerWrapper />);
@@ -276,26 +256,6 @@ describe('RNAppRatingProvider tests', () => {
         // opt for store rating
         fireEvent(mockComponent, 'onFireEvent', ACTION_EVENT.SUBMIT);
         expect(mockShowInAppReview).toHaveBeenCalledTimes(1);
-      });
-
-      it('should not open native android in-app review dialog, if event=SUBMIT, stage=STORE_RATING_CONFIRMATION, OS=android and debug=true', () => {
-        Platform.OS = 'android';
-
-        const {getByTestId} = render(<MockConsumerWrapper />);
-
-        const mockComponent = getByTestId('mock-component');
-
-        // show
-        fireEvent(mockComponent, 'onSetShowRNAppRating', true);
-        // set debug=true
-        fireEvent(mockComponent, 'onSetCustomRules', {debug: true});
-        // set callback
-        fireEvent(mockComponent, 'onSetCallback');
-        // submit rating
-        fireEvent(mockComponent, 'onFireEvent', ACTION_EVENT.SUBMIT, {rating: 5});
-        // opt for store rating
-        fireEvent(mockComponent, 'onFireEvent', ACTION_EVENT.SUBMIT);
-        expect(mockShowInAppReview).toHaveBeenCalledTimes(0);
       });
     });
 
