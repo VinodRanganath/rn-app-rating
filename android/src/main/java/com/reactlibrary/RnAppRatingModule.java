@@ -1,5 +1,8 @@
 package com.reactlibrary;
 
+import android.app.Activity;
+import java.util.Objects;
+
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
@@ -8,7 +11,7 @@ import com.facebook.react.bridge.Promise;
 import com.google.android.play.core.review.ReviewInfo;
 import com.google.android.play.core.review.ReviewManager;
 import com.google.android.play.core.review.ReviewManagerFactory;
-import com.google.android.play.core.task.Task;
+import com.google.android.play.core.tasks.Task;
 
 public class RnAppRatingModule extends ReactContextBaseJavaModule {
 
@@ -31,18 +34,25 @@ public class RnAppRatingModule extends ReactContextBaseJavaModule {
 							promise.resolve(true);
 							return;
 						}
-						ReviewManager reviewManager = ReviewManagerFactory.create((AppCompatActivity) getCurrentActivity());
+						ReviewManager reviewManager = ReviewManagerFactory.create(this.reactContext);
 
 						Task<ReviewInfo> request = reviewManager.requestReviewFlow();
-						request.addOnCompleteListener(task -> {
-								if (task.isSuccessful()) {
-										ReviewInfo reviewInfo = task.getResult();
-										Task<Void> flow = reviewManager.launchReviewFlow((AppCompatActivity) getCurrentActivity(), reviewInfo);
-										flow.addOnCompleteListener(task1 -> {
-												promise.resolve(true);
+						request.addOnCompleteListener(task1 -> {
+								if (task1.isSuccessful()) {
+										ReviewInfo reviewInfo = task1.getResult();
+										Activity currentActivity = getCurrentActivity();
+
+										if (currentActivity == null) {
+												promise.reject(new Error("no activity"));
+												return;
+										}
+
+										Task<Void> flow = reviewManager.launchReviewFlow(currentActivity, reviewInfo);
+										flow.addOnCompleteListener(task2 -> {
+												promise.resolve(task2.isSuccessful());
 										});
 								} else {
-										promise.reject(false);
+										promise.reject(new Error(Objects.requireNonNull(task1.getException()).getMessage()));
 								}
 						});
 				} catch (Exception e) {

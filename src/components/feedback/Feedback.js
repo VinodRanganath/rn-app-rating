@@ -52,6 +52,7 @@ const Feedback = props => {
             value={feedback}
             onChangeText={text => onFeedbackChange(text)}
             placeholder={config.feedbackInputPlaceholderText}
+            placeholderTextColor="#AAA"
           />
         </View>
       </View>

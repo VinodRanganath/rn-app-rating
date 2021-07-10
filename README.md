@@ -1,5 +1,20 @@
 # rn-app-rating
 
+Below are the Rating, Feedback and Store Rating Confirmation stages with positive and negative flows,
+
+![image info](./img/rn-app-rating.png)
+
+On submit of custom rating, we open the native in-app rating,
+
+### Android
+<img src='https://developer.android.com/images/google/play/in-app-review/iar-flow.jpg' alt='In-app review workflow on android'  />
+
+(Source: https://developer.android.com/guide/playcore/in-app-review)
+
+### iOS
+<img src='https://developer.apple.com/design/human-interface-guidelines/ios/images/AppRating_2x.png' alt='In-app review workflow on iOS'>
+
+(Source: https://developer.apple.com/design/human-interface-guidelines/ios/system-capabilities/ratings-and-reviews)
 ## WIP
 ```
 TODO:
