@@ -3,11 +3,10 @@ import {INITIAL_RN_APP_RATING_STORAGE_VALUE, RN_APP_RATING_STORAGE_KEY} from '..
 import {useContext} from 'react';
 import {RNAppRatingContext} from '../../provider';
 import moment from 'moment';
-import useLogger from '../useLogger/useLogger';
+import Logger from '../../helpers/logger/Logger';
 
 const useRuleManager = () => {
   const {getFromStorage, saveInStorage} = StorageHelper();
-  const {log} = useLogger();
   const {
     config: {rules},
   } = useContext(RNAppRatingContext);
@@ -22,29 +21,28 @@ const useRuleManager = () => {
   };
 
   const initRNAppRatingStorage = async () => {
-    log('initRNAppRating: start');
+    Logger.log('initRNAppRating: start');
     let storageValue = await getRNAppRatingStorageValue();
 
     // initialise values
     if (!storageValue) {
-      log('initRNAppRating: no storage values found, initialising...');
+      Logger.log('initRNAppRating: no storage values found, initialising...');
       await setRNAppRatingStorageValue(INITIAL_RN_APP_RATING_STORAGE_VALUE);
       return await getRNAppRatingStorageValue();
     }
 
     // update values only if debug is disabled
-    const {debug} = rules;
     const {launchTimes, rateLater, launchTimesPostRateLater, rateLaterOn} = storageValue;
-    const {minimumAppLaunchesSinceRateLater, minimumDaysSinceRateLater} = rules;
+    const {minimumAppLaunchesSinceRateLater, minimumDaysSinceRateLater, debug} = rules;
     storageValue = {...storageValue, launchTimes: launchTimes + 1};
     if (rateLater) {
-      log('initRNAppRating: rateLater=true');
+      Logger.log('initRNAppRating: rateLater=true');
       const currentLaunchTimesPostRateLater = launchTimesPostRateLater + 1;
       if (
         currentLaunchTimesPostRateLater >= minimumAppLaunchesSinceRateLater &&
         daysElapsed(rateLaterOn) >= minimumDaysSinceRateLater
       ) {
-        log('initRNAppRating: rate later rules satisfied');
+        Logger.log('initRNAppRating: rate later rules satisfied');
         storageValue = {
           ...storageValue,
           rateLater: false,
@@ -52,7 +50,7 @@ const useRuleManager = () => {
           rateLaterOn: null,
         };
       } else {
-        log('initRNAppRating: rate later rules not satisfied');
+        Logger.log('initRNAppRating: rate later rules not satisfied');
         storageValue = {
           ...storageValue,
           launchTimesPostRateLater: currentLaunchTimesPostRateLater,
@@ -61,14 +59,14 @@ const useRuleManager = () => {
     }
     if (!debug) await setRNAppRatingStorageValue(storageValue);
 
-    log('initRNAppRating: done');
+    Logger.log('initRNAppRating: done');
     return storageValue;
   };
 
   const rulesSatisfied = async () => {
     const {debug} = rules;
     // Return true if debug is enabled
-    log('showRNAppRating: check rules');
+    Logger.log('showRNAppRating: check rules');
     if (debug) return true;
 
     const storageValue = await getRNAppRatingStorageValue();

@@ -30,7 +30,7 @@ const ActionBar = props => {
         </View>
         <View style={styles.actionGroup}>
           <View style={styles.negativeAction}>
-            {(stage === FEEDBACK || showRateNever) && (
+            {(stage === FEEDBACK || showRateNever === true) && (
               <TouchableOpacity testID="action-bar-negative-button" onPress={() => onNegativeActionPress()}>
                 <Text testID="action-bar-negative-button-text" style={config.negativeButtonTextStyle || {}}>
                   {config.negativeButtonText}

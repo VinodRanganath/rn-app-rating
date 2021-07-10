@@ -28,6 +28,9 @@ jest.mock('../../helpers/storage/StorageHelper', () => () => ({
   getFromStorage: mockGetFromStorage,
   saveInStorage: mockSaveInStorage,
 }));
+jest.mock('../../helpers/logger/Logger', () => ({
+  log: jest.fn(),
+}));
 
 describe('useRuleManager tests', () => {
   afterEach(() => jest.clearAllMocks());

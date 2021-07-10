@@ -50,6 +50,9 @@ jest.mock('../hooks/useRuleManager/useRuleManager', () => () => ({
   setRateNever: mockSetRateNever,
   setRatingGiven: mockSetRatingGiven,
 }));
+jest.mock('../helpers/logger/Logger', () => ({
+  log: jest.fn(),
+}));
 NativeModules.RnAppRating = {
   showInAppReview: mockShowInAppReview,
 };

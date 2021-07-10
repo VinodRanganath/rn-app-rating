@@ -3,6 +3,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const {saveInStorage, getFromStorage, removeFromStorage} = StorageHelper();
 
+jest.mock('../logger/Logger', () => ({
+  log: jest.fn(),
+}));
+
 describe('Storage helper tests', () => {
   afterEach(() => jest.clearAllMocks());
 

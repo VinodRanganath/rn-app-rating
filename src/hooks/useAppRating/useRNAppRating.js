@@ -1,4 +1,5 @@
 import {useContext} from 'react';
+import Logger from '../../helpers/logger/Logger';
 import {RNAppRatingContext} from '../../provider';
 import useRuleManager from '../useRuleManager/useRuleManager';
 
@@ -8,6 +9,7 @@ const useRNAppRating = () => {
   const {initRNAppRatingStorage, rulesSatisfied, canShowRateNever} = useRuleManager();
 
   const initRNAppRating = customRules => {
+    Logger.setDebug(customRules?.debug === true);
     setCustomRules(customRules);
     return initRNAppRatingStorage();
   };
