@@ -1,5 +1,17 @@
 # rn-app-rating
 
+## WIP
+```
+TODO:
+1. Thank you stage
+2. Native in-app rating dialog for iOS
+```
+
+## About
+An easy to use in-app rating design that allows collection of rating score and feedback
+from the user. Designed to encourage users with positive experience to rate your
+application in the store. 
+
 Below are the Rating, Feedback and Store Rating Confirmation stages with positive and negative flows,
 
 ![image info](./img/rn-app-rating.png)
@@ -15,17 +27,6 @@ On submit of custom rating, we open the native in-app rating,
 <img src='https://developer.apple.com/design/human-interface-guidelines/ios/images/AppRating_2x.png' alt='In-app review workflow on iOS' width='250'>
 
 (Source: https://developer.apple.com/design/human-interface-guidelines/ios/system-capabilities/ratings-and-reviews)
-## WIP
-```
-TODO:
-1. Thank you stage
-2. Native in-app rating dialog for iOS
-```
-
-## About
-An easy to use in-app rating design that allows collection of rating score and feedback
-from the user. Designed to encourage users with positive experience to rate your
-application in the store. 
 
 ## Getting started
 npm\
