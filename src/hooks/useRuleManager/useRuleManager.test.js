@@ -66,7 +66,7 @@ describe('useRuleManager tests', () => {
       expect(mockGetFromStorage).toHaveBeenCalledTimes(1);
       expect(mockGetFromStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY);
       expect(mockSaveInStorage).toHaveBeenCalledTimes(0);
-      expect(res).toStrictEqual({...INITIAL_RN_APP_RATING_STORAGE_VALUE, launchTimes: 1});
+      expect(res).toStrictEqual({...INITIAL_RN_APP_RATING_STORAGE_VALUE, launchTimes: 2});
     });
 
     it('should update launch times and store value, if value is already present', async () => {

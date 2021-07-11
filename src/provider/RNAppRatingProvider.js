@@ -1,7 +1,14 @@
 import React, {useEffect, useRef, useState} from 'react';
 import RNAppRatingComponent from '../components/RNAppRatingComponent';
 import {RNAppRatingContext} from './RNAppRatingContext';
-import {ACTION_EVENT, FEEDBACK, INITIAL_APP_RATING_RESPONSE, RATING, STORE_RATING_CONFIRMATION} from '../constants';
+import {
+  ACTION_EVENT,
+  FEEDBACK,
+  INITIAL_APP_RATING_RESPONSE,
+  LOG_LEVELS,
+  RATING,
+  STORE_RATING_CONFIRMATION,
+} from '../constants';
 import DEFAULT_CONFIG from '../config/Config';
 import useRuleManager from '../hooks/useRuleManager/useRuleManager';
 import {NativeModules, Platform} from 'react-native';
@@ -26,9 +33,11 @@ const RNAppRatingProvider = props => {
       if (appRatingResponse.current.optedForStoreRating) {
         if (Platform.OS === 'android') {
           Logger.log('triggerActionEvent: open in-app rating for android: start');
-          RnAppRating.showInAppReview(config?.rules?.debug).then(_ =>
-            Logger.log('triggerActionEvent: open in-app rating for android: done'),
-          );
+          RnAppRating.showInAppReview(config?.rules?.debug)
+            .then(_ => Logger.log('triggerActionEvent: open in-app rating for android: done'))
+            .catch(err =>
+              Logger.log(`triggerActionEvent: open in-app rating for android: failed with, ${err}`, LOG_LEVELS.ERROR),
+            );
         } else if (Platform.OS === 'ios') {
           Logger.log('triggerActionEvent: open in-app rating for iOS');
           // TODO: open native in-app rating popup for ios

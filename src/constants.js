@@ -26,7 +26,7 @@ const STORE_RATING_ICON =
 // storage
 const RN_APP_RATING_STORAGE_KEY = 'RN_APP_RATING_STORAGE_KEY';
 const INITIAL_RN_APP_RATING_STORAGE_VALUE = {
-  launchTimes: 0,
+  launchTimes: 1,
   installedOn: moment.utc().valueOf(),
   rateLater: false,
   launchTimesPostRateLater: 0,
