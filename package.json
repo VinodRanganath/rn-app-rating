@@ -1,7 +1,7 @@
 {
   "name": "rn-app-rating",
   "title": "Rn App Rating",
-  "version": "0.0.14-alpha",
+  "version": "1.0.0",
   "description": "A react native component that allows you to collect user feedback and promotes users with a positive experience to rate your application on the store, via in-app rating.",
   "main": "src/index.js",
   "files": [
