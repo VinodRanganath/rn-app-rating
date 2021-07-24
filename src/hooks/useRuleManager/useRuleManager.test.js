@@ -11,7 +11,7 @@ const mockSaveInStorage = jest.fn().mockImplementation(() => Promise.resolve());
 const mockLog = jest.fn();
 const yesterday = moment().subtract(1, 'day').utc().valueOf();
 const today = moment().utc().valueOf();
-const tomorrow = moment().subtract(1, 'd').utc().valueOf();
+const tomorrow = moment().add(1, 'd').utc().valueOf();
 const wrapper = ({debug, children}) => {
   const config = {
     ...DEFAULT_CONFIG,
@@ -224,7 +224,7 @@ describe('useRuleManager tests', () => {
         launchTimes: INITIAL_RN_APP_RATING_STORAGE_VALUE.launchTimes + 1,
       };
       mockGetFromStorage.mockImplementation(() =>
-        Promise.resolve({...INITIAL_RN_APP_RATING_STORAGE_VALUE, rateLater: true, rateLaterOn: tomorrow}),
+        Promise.resolve({...INITIAL_RN_APP_RATING_STORAGE_VALUE, rateLater: true, rateLaterOn: yesterday}),
       );
 
       const {result} = renderHook(useRuleManager, {wrapper});
@@ -244,7 +244,7 @@ describe('useRuleManager tests', () => {
         launchTimes: INITIAL_RN_APP_RATING_STORAGE_VALUE.launchTimes + 1,
       };
       mockGetFromStorage.mockImplementation(() =>
-        Promise.resolve({...INITIAL_RN_APP_RATING_STORAGE_VALUE, rateLater: true, rateLaterOn: tomorrow}),
+        Promise.resolve({...INITIAL_RN_APP_RATING_STORAGE_VALUE, rateLater: true, rateLaterOn: yesterday}),
       );
 
       const {result} = renderHook(useRuleManager, {wrapper, initialProps: {debug: true}});
@@ -332,6 +332,22 @@ describe('useRuleManager tests', () => {
       const storageValue = {
         launchTimes: 1,
         installedOn: today,
+      };
+      mockGetFromStorage.mockImplementation(() => Promise.resolve(storageValue));
+
+      const {result} = renderHook(useRuleManager, {wrapper});
+
+      const res = await result.current.rulesSatisfied();
+
+      expect(mockGetFromStorage).toHaveBeenCalledTimes(1);
+      expect(mockGetFromStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY);
+      expect(res).toBeFalsy();
+    });
+
+    it('should return false if days expired post install (invalid date - tomorrow) < minimumAppInstalledDays', async () => {
+      const storageValue = {
+        launchTimes: 1,
+        installedOn: tomorrow,
       };
       mockGetFromStorage.mockImplementation(() => Promise.resolve(storageValue));
 
