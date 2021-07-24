@@ -43,3 +43,7 @@ buck-out/
 
 # Test
 coverage/
+reports/
+
+# stryker temp files
+.stryker-tmp

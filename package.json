@@ -13,12 +13,13 @@
   ],
   "scripts": {
     "test": "jest --coverage",
+    "test:mutation": "npx stryker run",
     "test:update": "jest --coverage --updateSnapshot",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage && open ./coverage/lcov-report/index.html",
     "lint": "eslint .",
-    "format:check": "prettier \"{src, example}/**/*.js\" --check",
-    "format": "prettier \"{src, example}/**/*.js\" --write"
+    "format:check": "prettier src/**/*.js --check",
+    "format": "prettier src/**/*.js --write"
   },
   "bugs": {
     "url": "https://github.com/VinodRanganath/rn-app-rating/issues"
@@ -52,6 +53,8 @@
     "react-native": ">=0.60.0"
   },
   "devDependencies": {
+    "@stryker-mutator/core": "^5.2.2",
+    "@stryker-mutator/jest-runner": "^5.2.2",
     "@testing-library/react-hooks": "7.0.0",
     "@testing-library/react-native": "7.2.0",
     "babel-eslint": "10.1.0",

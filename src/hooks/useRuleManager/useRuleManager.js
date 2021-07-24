@@ -70,7 +70,7 @@ const useRuleManager = () => {
     if (debug) return true;
 
     const storageValue = await getRNAppRatingStorageValue();
-    // Return false if not value is found in storage or rateNever=true or ratingGiven=true
+    // Return false if no value is found in storage or rateNever=true or ratingGiven=true
     if (!storageValue || storageValue?.rateNever || storageValue?.ratingGiven) return false;
 
     const {launchTimes, installedOn, rateLater, launchTimesPostRateLater, rateLaterOn} = storageValue;

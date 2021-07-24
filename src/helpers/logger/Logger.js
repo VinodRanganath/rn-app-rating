@@ -1,5 +1,4 @@
 import {LOG_LEVELS, LOG_PREFIX} from '../../constants';
-
 export default class {
   static isDebug = false;
 

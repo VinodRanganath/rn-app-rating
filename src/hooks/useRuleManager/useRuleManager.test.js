@@ -8,6 +8,10 @@ import moment from 'moment';
 
 const mockGetFromStorage = jest.fn();
 const mockSaveInStorage = jest.fn().mockImplementation(() => Promise.resolve());
+const mockLog = jest.fn();
+const yesterday = moment().subtract(1, 'day').utc().valueOf();
+const today = moment().utc().valueOf();
+const tomorrow = moment().subtract(1, 'd').utc().valueOf();
 const wrapper = ({debug, children}) => {
   const config = {
     ...DEFAULT_CONFIG,
@@ -29,7 +33,7 @@ jest.mock('../../helpers/storage/StorageHelper', () => () => ({
   saveInStorage: mockSaveInStorage,
 }));
 jest.mock('../../helpers/logger/Logger', () => ({
-  log: jest.fn(),
+  log: message => mockLog(message),
 }));
 
 describe('useRuleManager tests', () => {
@@ -46,6 +50,7 @@ describe('useRuleManager tests', () => {
 
       expect(mockGetFromStorage).toHaveBeenCalledTimes(2);
       expect(mockGetFromStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY);
+      expect(mockGetFromStorage).toHaveBeenNthCalledWith(2, RN_APP_RATING_STORAGE_KEY);
       expect(mockSaveInStorage).toHaveBeenCalledTimes(1);
       expect(mockSaveInStorage).toHaveBeenNthCalledWith(
         1,
@@ -56,17 +61,29 @@ describe('useRuleManager tests', () => {
       expect(res).toStrictEqual(INITIAL_RN_APP_RATING_STORAGE_VALUE);
     });
 
-    it('should not update launch times, if value is already present and debug=true', async () => {
-      mockGetFromStorage.mockImplementation(() => Promise.resolve(INITIAL_RN_APP_RATING_STORAGE_VALUE));
+    it('should log details and initialise storage with default values, if value is not already present and debug=true', async () => {
+      mockGetFromStorage.mockImplementationOnce(() => Promise.resolve());
+      mockGetFromStorage.mockImplementationOnce(() => Promise.resolve(INITIAL_RN_APP_RATING_STORAGE_VALUE));
 
       const {result} = renderHook(useRuleManager, {wrapper, initialProps: {debug: true}});
 
       const res = await result.current.initRNAppRatingStorage();
 
-      expect(mockGetFromStorage).toHaveBeenCalledTimes(1);
+      expect(mockGetFromStorage).toHaveBeenCalledTimes(2);
       expect(mockGetFromStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY);
-      expect(mockSaveInStorage).toHaveBeenCalledTimes(0);
-      expect(res).toStrictEqual({...INITIAL_RN_APP_RATING_STORAGE_VALUE, launchTimes: 2});
+      expect(mockGetFromStorage).toHaveBeenNthCalledWith(2, RN_APP_RATING_STORAGE_KEY);
+      expect(mockSaveInStorage).toHaveBeenCalledTimes(1);
+      expect(mockSaveInStorage).toHaveBeenNthCalledWith(
+        1,
+        RN_APP_RATING_STORAGE_KEY,
+        INITIAL_RN_APP_RATING_STORAGE_VALUE,
+      );
+      expect(mockGetFromStorage).toHaveBeenNthCalledWith(2, RN_APP_RATING_STORAGE_KEY);
+      expect(res).toStrictEqual(INITIAL_RN_APP_RATING_STORAGE_VALUE);
+      // logs
+      expect(mockLog).toHaveBeenCalledTimes(2);
+      expect(mockLog).toHaveBeenNthCalledWith(1, 'initRNAppRating: start');
+      expect(mockLog).toHaveBeenNthCalledWith(2, 'initRNAppRating: no storage values found, initialising...');
     });
 
     it('should update launch times and store value, if value is already present', async () => {
@@ -87,8 +104,47 @@ describe('useRuleManager tests', () => {
       expect(res).toStrictEqual(updatedValue);
     });
 
-    it('should update launch times, launchTimesPostRateLater and store value, if value is already present and rateLater=true', async () => {
-      const today = moment().utc().valueOf();
+    it('should log details and must not update launch times, if value is already present and debug=true', async () => {
+      mockGetFromStorage.mockImplementation(() => Promise.resolve(INITIAL_RN_APP_RATING_STORAGE_VALUE));
+
+      const {result} = renderHook(useRuleManager, {wrapper, initialProps: {debug: true}});
+
+      const res = await result.current.initRNAppRatingStorage();
+
+      expect(mockGetFromStorage).toHaveBeenCalledTimes(1);
+      expect(mockGetFromStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY);
+      expect(mockSaveInStorage).toHaveBeenCalledTimes(0);
+      expect(res).toStrictEqual({...INITIAL_RN_APP_RATING_STORAGE_VALUE, launchTimes: 2});
+      // logs
+      expect(mockLog).toHaveBeenCalledTimes(2);
+      expect(mockLog).toHaveBeenNthCalledWith(1, 'initRNAppRating: start');
+      expect(mockLog).toHaveBeenNthCalledWith(2, 'initRNAppRating: done');
+    });
+
+    it('should update launch times, launchTimesPostRateLater and store value, if value is already present, rateLater=true, currentLaunchTimesPostRateLater < minimumAppLaunchesSinceRateLater and daysElapsed >= minimumDaysSinceRateLater', async () => {
+      const updatedValue = {
+        ...INITIAL_RN_APP_RATING_STORAGE_VALUE,
+        launchTimes: INITIAL_RN_APP_RATING_STORAGE_VALUE.launchTimes + 1,
+        launchTimesPostRateLater: 0,
+        rateLater: true,
+        rateLaterOn: tomorrow,
+      };
+      mockGetFromStorage.mockImplementation(() =>
+        Promise.resolve({...INITIAL_RN_APP_RATING_STORAGE_VALUE, launchTimesPostRateLater: -1, rateLater: true, rateLaterOn: tomorrow}),
+      );
+
+      const {result} = renderHook(useRuleManager, {wrapper});
+
+      const res = await result.current.initRNAppRatingStorage();
+
+      expect(mockGetFromStorage).toHaveBeenCalledTimes(1);
+      expect(mockGetFromStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY);
+      expect(mockSaveInStorage).toHaveBeenCalledTimes(1);
+      expect(mockSaveInStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY, updatedValue);
+      expect(res).toStrictEqual(updatedValue);
+    });
+
+    it('should update launch times, launchTimesPostRateLater and store value, if value is already present, rateLater=true, currentLaunchTimesPostRateLater >= minimumAppLaunchesSinceRateLater and daysElapsed < minimumDaysSinceRateLater', async () => {
       const updatedValue = {
         ...INITIAL_RN_APP_RATING_STORAGE_VALUE,
         launchTimes: INITIAL_RN_APP_RATING_STORAGE_VALUE.launchTimes + 1,
@@ -111,12 +167,62 @@ describe('useRuleManager tests', () => {
       expect(res).toStrictEqual(updatedValue);
     });
 
+    it('should update launch times, launchTimesPostRateLater and store value, if value is already present, rateLater=true and rules are not satisfied', async () => {
+      const updatedValue = {
+        ...INITIAL_RN_APP_RATING_STORAGE_VALUE,
+        launchTimes: INITIAL_RN_APP_RATING_STORAGE_VALUE.launchTimes + 1,
+        launchTimesPostRateLater: 0,
+        rateLater: true,
+        rateLaterOn: today,
+      };
+      mockGetFromStorage.mockImplementation(() =>
+        Promise.resolve({...INITIAL_RN_APP_RATING_STORAGE_VALUE, launchTimesPostRateLater: -1, rateLater: true, rateLaterOn: today}),
+      );
+
+      const {result} = renderHook(useRuleManager, {wrapper});
+
+      const res = await result.current.initRNAppRatingStorage();
+
+      expect(mockGetFromStorage).toHaveBeenCalledTimes(1);
+      expect(mockGetFromStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY);
+      expect(mockSaveInStorage).toHaveBeenCalledTimes(1);
+      expect(mockSaveInStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY, updatedValue);
+      expect(res).toStrictEqual(updatedValue);
+    });
+
+    it('should log details and must not update launch times, launchTimesPostRateLater and store value, if value is already present, rateLater=true, rate later rules are not satisfied and debug=true', async () => {
+      const updatedValue = {
+        ...INITIAL_RN_APP_RATING_STORAGE_VALUE,
+        launchTimes: INITIAL_RN_APP_RATING_STORAGE_VALUE.launchTimes + 1,
+        launchTimesPostRateLater: INITIAL_RN_APP_RATING_STORAGE_VALUE.launchTimesPostRateLater + 1,
+        rateLater: true,
+        rateLaterOn: today,
+      };
+      mockGetFromStorage.mockImplementation(() =>
+        Promise.resolve({...INITIAL_RN_APP_RATING_STORAGE_VALUE, rateLater: true, rateLaterOn: today}),
+      );
+
+      const {result} = renderHook(useRuleManager, {wrapper, initialProps: {debug: true}});
+
+      const res = await result.current.initRNAppRatingStorage();
+
+      expect(mockGetFromStorage).toHaveBeenCalledTimes(1);
+      expect(mockGetFromStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY);
+      expect(mockSaveInStorage).toHaveBeenCalledTimes(0);
+      expect(res).toStrictEqual(updatedValue);
+      // logs
+      expect(mockLog).toHaveBeenCalledTimes(4);
+      expect(mockLog).toHaveBeenNthCalledWith(1, 'initRNAppRating: start');
+      expect(mockLog).toHaveBeenNthCalledWith(2, 'initRNAppRating: rateLater=true');
+      expect(mockLog).toHaveBeenNthCalledWith(3, 'initRNAppRating: rate later rules not satisfied');
+      expect(mockLog).toHaveBeenNthCalledWith(4, 'initRNAppRating: done');
+    });
+
     it('should update launch times, reset rate later values and store value, if value is already present, rateLater=true and rate later rules are satisfied', async () => {
       const updatedValue = {
         ...INITIAL_RN_APP_RATING_STORAGE_VALUE,
         launchTimes: INITIAL_RN_APP_RATING_STORAGE_VALUE.launchTimes + 1,
       };
-      const tomorrow = moment().subtract(1, 'd').utc().valueOf();
       mockGetFromStorage.mockImplementation(() =>
         Promise.resolve({...INITIAL_RN_APP_RATING_STORAGE_VALUE, rateLater: true, rateLaterOn: tomorrow}),
       );
@@ -131,12 +237,34 @@ describe('useRuleManager tests', () => {
       expect(mockSaveInStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY, updatedValue);
       expect(res).toStrictEqual(updatedValue);
     });
+
+    it('should log details and must not update launch times, reset rate later values and store value, if value is already present, rateLater=true, rate later rules are satisfied and debug=true', async () => {
+      const updatedValue = {
+        ...INITIAL_RN_APP_RATING_STORAGE_VALUE,
+        launchTimes: INITIAL_RN_APP_RATING_STORAGE_VALUE.launchTimes + 1,
+      };
+      mockGetFromStorage.mockImplementation(() =>
+        Promise.resolve({...INITIAL_RN_APP_RATING_STORAGE_VALUE, rateLater: true, rateLaterOn: tomorrow}),
+      );
+
+      const {result} = renderHook(useRuleManager, {wrapper, initialProps: {debug: true}});
+
+      const res = await result.current.initRNAppRatingStorage();
+
+      expect(mockGetFromStorage).toHaveBeenCalledTimes(1);
+      expect(mockGetFromStorage).toHaveBeenNthCalledWith(1, RN_APP_RATING_STORAGE_KEY);
+      expect(mockSaveInStorage).toHaveBeenCalledTimes(0);
+      expect(res).toStrictEqual(updatedValue);
+      // logs
+      expect(mockLog).toHaveBeenCalledTimes(4);
+      expect(mockLog).toHaveBeenNthCalledWith(1, 'initRNAppRating: start');
+      expect(mockLog).toHaveBeenNthCalledWith(2, 'initRNAppRating: rateLater=true');
+      expect(mockLog).toHaveBeenNthCalledWith(3, 'initRNAppRating: rate later rules satisfied');
+      expect(mockLog).toHaveBeenNthCalledWith(4, 'initRNAppRating: done');
+    });
   });
 
   describe('rulesSatisfied', () => {
-    const yesterday = moment().subtract(1, 'day').utc().valueOf();
-    const today = moment().utc().valueOf();
-
     it('should return true if all rules are satisfied, when rateLater=false', async () => {
       const storageValue = {
         launchTimes: 1,
@@ -173,13 +301,16 @@ describe('useRuleManager tests', () => {
       expect(res).toBeTruthy();
     });
 
-    it('should return true if debug=true', async () => {
+    it('should log details and return true if debug=true', async () => {
       const {result} = renderHook(useRuleManager, {wrapper, initialProps: {debug: true}});
 
       const res = await result.current.rulesSatisfied();
 
       expect(mockGetFromStorage).toHaveBeenCalledTimes(0);
       expect(res).toBeTruthy();
+      // logs
+      expect(mockLog).toHaveBeenCalledTimes(1);
+      expect(mockLog).toHaveBeenNthCalledWith(1, 'showRNAppRating: check rules');
     });
 
     it('should return false if launch times < minimumAppLaunches', async () => {
@@ -213,7 +344,7 @@ describe('useRuleManager tests', () => {
       expect(res).toBeFalsy();
     });
 
-    it('should return false if launch times < minimumAppLaunchesSinceRateLater, when rateLater=true', async () => {
+    it('should return false if launchTimesPostRateLater < minimumAppLaunchesSinceRateLater, when rateLater=true', async () => {
       const storageValue = {
         launchTimes: 1,
         installedOn: yesterday,
@@ -231,7 +362,7 @@ describe('useRuleManager tests', () => {
       expect(res).toBeFalsy();
     });
 
-    it('should return false if days expired post rate later < minimumDaysSinceRateLater, when rateLater=true', async () => {
+    it('should return false if launchTimesPostRateLater >= minimumAppLaunchesSinceRateLater and days expired post rate later < minimumDaysSinceRateLater, when rateLater=true', async () => {
       const storageValue = {
         launchTimes: 1,
         installedOn: yesterday,
