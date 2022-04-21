@@ -1,9 +1,10 @@
 import React from 'react';
 import useRNAppRating from './useRNAppRating';
-import {renderHook} from '@testing-library/react-hooks';
-import {RNAppRatingContext} from '../../provider';
-import {ACTION_EVENT} from '../../constants';
+import { renderHook } from '@testing-library/react-hooks';
+import { RNAppRatingContext } from '../../provider';
+import { ACTION_EVENT } from '../../constants';
 
+const mockSetDebug = jest.fn();
 const mockSetShowRNAppRating = jest.fn();
 const mockFireActionEvent = jest.fn();
 const mockSetJourneyCompletionCallback = jest.fn();
@@ -12,7 +13,7 @@ const mockSetCustomRules = jest.fn();
 const mockInitRNAppRatingStorage = jest.fn();
 const mockRulesSatisfied = jest.fn();
 const mockCanShowRateNever = jest.fn();
-const wrapper = ({children}) => (
+const wrapper = ({ children }) => (
   <RNAppRatingContext.Provider
     value={{
       setShowRNAppRating: mockSetShowRNAppRating,
@@ -30,22 +31,45 @@ jest.mock('../useRuleManager/useRuleManager', () => () => ({
   rulesSatisfied: mockRulesSatisfied,
   canShowRateNever: mockCanShowRateNever,
 }));
+jest.mock('../../helpers/logger/Logger', () => ({
+  setDebug: isDebug => mockSetDebug(isDebug),
+}));
 
 describe('RNAppRating tests', () => {
   afterEach(() => jest.clearAllMocks());
 
   describe('initRNAppRating', () => {
-    it('should initialise RNAppRating and load custom rules, if given', async () => {
+    it('should initialise RNAppRating, set debug=false and load custom rules, if given and if debug!==true', async () => {
       const customRules = {
         minimumAppLaunches: 1,
         minimumAppInstalledDays: 2,
       };
-      mockInitRNAppRatingStorage.mockReturnValue({launchTimes: 1});
+      mockInitRNAppRatingStorage.mockReturnValue({ launchTimes: 1 });
 
-      const {result} = renderHook(useRNAppRating, {wrapper});
+      const { result } = renderHook(useRNAppRating, { wrapper });
       const res = await result.current.initRNAppRating(customRules);
 
-      expect(res).toStrictEqual({launchTimes: 1});
+      expect(mockSetDebug).toHaveBeenCalledTimes(1);
+      expect(mockSetDebug).toHaveBeenNthCalledWith(1, false);
+      expect(res).toStrictEqual({ launchTimes: 1 });
+      expect(mockSetCustomRules).toHaveBeenCalledTimes(1);
+      expect(mockSetCustomRules).toHaveBeenNthCalledWith(1, customRules);
+    });
+
+    it('should initialise RNAppRating, set debug=true and load custom rules, if given and if debug===true', async () => {
+      const customRules = {
+        minimumAppLaunches: 1,
+        minimumAppInstalledDays: 2,
+        debug: true,
+      };
+      mockInitRNAppRatingStorage.mockReturnValue({ launchTimes: 1 });
+
+      const { result } = renderHook(useRNAppRating, { wrapper });
+      const res = await result.current.initRNAppRating(customRules);
+
+      expect(mockSetDebug).toHaveBeenCalledTimes(1);
+      expect(mockSetDebug).toHaveBeenNthCalledWith(1, true);
+      expect(res).toStrictEqual({ launchTimes: 1 });
       expect(mockSetCustomRules).toHaveBeenCalledTimes(1);
       expect(mockSetCustomRules).toHaveBeenNthCalledWith(1, customRules);
     });
@@ -57,7 +81,7 @@ describe('RNAppRating tests', () => {
       const customConfig = {};
       mockRulesSatisfied.mockReturnValue(true);
 
-      const {result} = renderHook(useRNAppRating, {wrapper});
+      const { result } = renderHook(useRNAppRating, { wrapper });
       const res = await result.current.showRNAppRating(customCallback, customConfig);
 
       expect(res).toBeTruthy();
@@ -72,7 +96,7 @@ describe('RNAppRating tests', () => {
     it('should not show app rating, when showRNAppRatingPrompt is called and rules are not satisfied', async () => {
       mockRulesSatisfied.mockReturnValue(false);
 
-      const {result} = renderHook(useRNAppRating, {wrapper});
+      const { result } = renderHook(useRNAppRating, { wrapper });
       const res = await result.current.showRNAppRating();
 
       expect(res).toBeFalsy();
@@ -80,11 +104,11 @@ describe('RNAppRating tests', () => {
       expect(mockSetJourneyCompletionCallback).toHaveBeenCalledTimes(0);
       expect(mockSetCustomConfig).toHaveBeenCalledTimes(0);
     });
-  });
+  }); ``;
 
   describe('hideRNAppRating', () => {
     it('should set showRNAppRating=false when hideRNAppRatingPrompt is called', () => {
-      const {result} = renderHook(useRNAppRating, {wrapper});
+      const { result } = renderHook(useRNAppRating, { wrapper });
       result.current.hideRNAppRating();
 
       expect(mockSetShowRNAppRating).toHaveBeenCalledTimes(1);
@@ -95,9 +119,9 @@ describe('RNAppRating tests', () => {
   describe('triggerActionEvent', () => {
     it('should call fireActionEvent, with the given event and param, when triggerActionEvent is called', () => {
       const event = ACTION_EVENT.CANCEL;
-      const param = {journeyCancelled: true};
+      const param = { journeyCancelled: true };
 
-      const {result} = renderHook(useRNAppRating, {wrapper});
+      const { result } = renderHook(useRNAppRating, { wrapper });
       result.current.triggerActionEvent(event, param);
 
       expect(mockFireActionEvent).toHaveBeenCalledTimes(1);
@@ -107,7 +131,7 @@ describe('RNAppRating tests', () => {
 
   describe('canShowRateNever', () => {
     it('should check and return if rate never button should be shown, based on configured rule conditions', () => {
-      const {result} = renderHook(useRNAppRating, {wrapper});
+      const { result } = renderHook(useRNAppRating, { wrapper });
       result.current.shouldShowRateNever();
 
       expect(mockCanShowRateNever).toHaveBeenCalledTimes(1);

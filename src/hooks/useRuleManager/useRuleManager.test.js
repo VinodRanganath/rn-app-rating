@@ -538,7 +538,16 @@ describe('useRuleManager tests', () => {
       expect(res).toBeTruthy();
     });
 
-    it('should return true if rate later clicks is < minimumRateLaterClicksToShowRateNever', async () => {
+    it('should return true if debug=true', async () => {
+      const {result} = renderHook(useRuleManager, {wrapper, initialProps: {debug: true}});
+
+      const res = await result.current.canShowRateNever();
+
+      expect(mockGetFromStorage).toHaveBeenCalledTimes(0);
+      expect(res).toBeTruthy();
+    });
+
+    it('should return false if rate later clicks is < minimumRateLaterClicksToShowRateNever', async () => {
       mockGetFromStorage.mockImplementation(() =>
         Promise.resolve({...INITIAL_RN_APP_RATING_STORAGE_VALUE, rateLaterClicks: 1}),
       );
