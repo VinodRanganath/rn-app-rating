@@ -130,7 +130,12 @@ describe('useRuleManager tests', () => {
         rateLaterOn: tomorrow,
       };
       mockGetFromStorage.mockImplementation(() =>
-        Promise.resolve({...INITIAL_RN_APP_RATING_STORAGE_VALUE, launchTimesPostRateLater: -1, rateLater: true, rateLaterOn: tomorrow}),
+        Promise.resolve({
+          ...INITIAL_RN_APP_RATING_STORAGE_VALUE,
+          launchTimesPostRateLater: -1,
+          rateLater: true,
+          rateLaterOn: tomorrow,
+        }),
       );
 
       const {result} = renderHook(useRuleManager, {wrapper});
@@ -176,7 +181,12 @@ describe('useRuleManager tests', () => {
         rateLaterOn: today,
       };
       mockGetFromStorage.mockImplementation(() =>
-        Promise.resolve({...INITIAL_RN_APP_RATING_STORAGE_VALUE, launchTimesPostRateLater: -1, rateLater: true, rateLaterOn: today}),
+        Promise.resolve({
+          ...INITIAL_RN_APP_RATING_STORAGE_VALUE,
+          launchTimesPostRateLater: -1,
+          rateLater: true,
+          rateLaterOn: today,
+        }),
       );
 
       const {result} = renderHook(useRuleManager, {wrapper});

@@ -6,7 +6,8 @@
   },
   "extends": [
     "plugin:react/recommended",
-    "google"
+    "google",
+    "prettier"
   ],
   "parserOptions": {
     "ecmaFeatures": {
@@ -17,7 +18,8 @@
   },
   "parser": "babel-eslint",
   "plugins": [
-    "react-native"
+    "react-native",
+    "prettier"
   ],
   "rules": {
     "max-len": "off",
@@ -26,6 +28,7 @@
     "arrow-parens": "off",
     "indent": "off",
     "new-cap": "off",
-    "operator-linebreak": "off"
+    "operator-linebreak": "off",
+    "prettier/prettier": "error"
   }
 }
