@@ -243,7 +243,7 @@ describe('RNAppRatingProvider tests', () => {
         expect(mockSetRatingGiven).toHaveBeenCalledTimes(1);
       });
 
-      it('should open native android in-app review dialog, if event=SUBMIT, stage=STORE_RATING_CONFIRMATION and OS=android', () => {
+      it('should open native android in-app review dialog with false, if event=SUBMIT, stage=STORE_RATING_CONFIRMATION, OS=android and debug=false', () => {
         Platform.OS = 'android';
 
         const {getByTestId} = render(<MockConsumerWrapper />);
@@ -259,6 +259,48 @@ describe('RNAppRatingProvider tests', () => {
         // opt for store rating
         fireEvent(mockComponent, 'onFireEvent', ACTION_EVENT.SUBMIT);
         expect(mockShowInAppReview).toHaveBeenCalledTimes(1);
+        expect(mockShowInAppReview).toHaveBeenNthCalledWith(1, false);
+      });
+
+      it('should open native android in-app review dialog with false, if event=SUBMIT, stage=STORE_RATING_CONFIRMATION, OS=android and debug=true', () => {
+        Platform.OS = 'android';
+
+        const {getByTestId} = render(<MockConsumerWrapper />);
+
+        const mockComponent = getByTestId('mock-component');
+
+        // load custom rules
+        fireEvent(mockComponent, 'onSetCustomRules', {debug: true});
+
+        // show
+        fireEvent(mockComponent, 'onSetShowRNAppRating', true);
+        // set callback
+        fireEvent(mockComponent, 'onSetCallback');
+        // submit rating
+        fireEvent(mockComponent, 'onFireEvent', ACTION_EVENT.SUBMIT, {rating: 5});
+        // opt for store rating
+        fireEvent(mockComponent, 'onFireEvent', ACTION_EVENT.SUBMIT);
+        expect(mockShowInAppReview).toHaveBeenCalledTimes(1);
+        expect(mockShowInAppReview).toHaveBeenNthCalledWith(1, true);
+      });
+
+      it('should open native android in-app review dialog without params, if event=SUBMIT, stage=STORE_RATING_CONFIRMATION, OS=ios', () => {
+        Platform.OS = 'ios';
+
+        const {getByTestId} = render(<MockConsumerWrapper />);
+
+        const mockComponent = getByTestId('mock-component');
+
+        // show
+        fireEvent(mockComponent, 'onSetShowRNAppRating', true);
+        // set callback
+        fireEvent(mockComponent, 'onSetCallback');
+        // submit rating
+        fireEvent(mockComponent, 'onFireEvent', ACTION_EVENT.SUBMIT, {rating: 5});
+        // opt for store rating
+        fireEvent(mockComponent, 'onFireEvent', ACTION_EVENT.SUBMIT);
+        expect(mockShowInAppReview).toHaveBeenCalledTimes(1);
+        expect(mockShowInAppReview).toHaveBeenNthCalledWith(1);
       });
     });
 

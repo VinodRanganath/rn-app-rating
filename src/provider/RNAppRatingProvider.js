@@ -40,7 +40,11 @@ const RNAppRatingProvider = props => {
             );
         } else if (Platform.OS === 'ios') {
           Logger.log('triggerActionEvent: open in-app rating for iOS');
-          // TODO: open native in-app rating popup for ios
+          RnAppRating.showInAppReview()
+            .then(_ => Logger.log('triggerActionEvent: open in-app rating for iOS: done'))
+            .catch(err =>
+              Logger.log(`triggerActionEvent: open in-app rating for iOS: failed with, ${err}`, LOG_LEVELS.ERROR),
+            );
         }
       }
     }
