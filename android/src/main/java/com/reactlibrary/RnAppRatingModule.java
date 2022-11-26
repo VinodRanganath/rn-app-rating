@@ -1,6 +1,8 @@
 package com.reactlibrary;
 
 import android.app.Activity;
+import android.os.Handler;
+import android.os.Looper;
 import java.util.Objects;
 
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -34,26 +36,28 @@ public class RnAppRatingModule extends ReactContextBaseJavaModule {
 							promise.resolve(true);
 							return;
 						}
-						ReviewManager reviewManager = ReviewManagerFactory.create(this.reactContext);
+						new Handler(Looper.getMainLooper()).post(() -> {
+							ReviewManager reviewManager = ReviewManagerFactory.create(this.reactContext);
 
-						Task<ReviewInfo> request = reviewManager.requestReviewFlow();
-						request.addOnCompleteListener(task1 -> {
-								if (task1.isSuccessful()) {
-										ReviewInfo reviewInfo = task1.getResult();
-										Activity currentActivity = getCurrentActivity();
+							Task<ReviewInfo> request = reviewManager.requestReviewFlow();
+							request.addOnCompleteListener(task1 -> {
+									if (task1.isSuccessful()) {
+											ReviewInfo reviewInfo = task1.getResult();
+											Activity currentActivity = getCurrentActivity();
 
-										if (currentActivity == null) {
-												promise.reject(new Error("no activity"));
-												return;
-										}
+											if (currentActivity == null) {
+													promise.reject(new Error("no activity"));
+													return;
+											}
 
-										Task<Void> flow = reviewManager.launchReviewFlow(currentActivity, reviewInfo);
-										flow.addOnCompleteListener(task2 -> {
-												promise.resolve(task2.isSuccessful());
-										});
-								} else {
-										promise.reject(new Error(Objects.requireNonNull(task1.getException()).getMessage()));
-								}
+											Task<Void> flow = reviewManager.launchReviewFlow(currentActivity, reviewInfo);
+											flow.addOnCompleteListener(task2 -> {
+													promise.resolve(task2.isSuccessful());
+											});
+									} else {
+											promise.reject(new Error(Objects.requireNonNull(task1.getException()).getMessage()));
+									}
+							});
 						});
 				} catch (Exception e) {
 						promise.reject(e);
