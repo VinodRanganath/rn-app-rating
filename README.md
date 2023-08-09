@@ -17,7 +17,7 @@ On submit of custom rating, we open the native in-app rating,
 (Source: https://developer.android.com/guide/playcore/in-app-review)
 
 ### iOS
-<img src='https://developer.apple.com/design/human-interface-guidelines/ios/images/AppRating_2x.png' alt='In-app review workflow on iOS' width='250'>
+<img src='https://9to5mac.com/wp-content/uploads/sites/6/2017/06/simulator-screen-shot-25-jan-2017-12-47-41-2.jpg?quality=82&strip=all' alt='In-app review workflow on iOS' width='250'>
 
 (Source: https://developer.apple.com/design/human-interface-guidelines/ios/system-capabilities/ratings-and-reviews)
 
