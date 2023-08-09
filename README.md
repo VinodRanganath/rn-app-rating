@@ -21,12 +21,6 @@ On submit of custom rating, we open the native in-app rating,
 
 (Source: https://developer.apple.com/design/human-interface-guidelines/ios/system-capabilities/ratings-and-reviews)
 
-## WIP
-```
-1. Thank you stage
-2. Native in-app rating dialog for iOS
-```
-
 ## Getting started
 npm\
 `$ npm install rn-app-rating`

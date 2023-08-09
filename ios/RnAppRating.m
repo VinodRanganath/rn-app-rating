@@ -1,16 +1,22 @@
-// RnAppRating.m
+#import <Foundation/Foundation.h>
+#import <StoreKit/SKStoreReviewController.h>
+#import <UIKit/UIKit.h>
+#import <React/RCTBridgeModule.h>
 
-#import "RnAppRating.h"
+@interface RCT_EXTERN_MODULE(RnAppRating, NSObject)
 
-
-@implementation RnAppRating
-
-RCT_EXPORT_MODULE()
-
-RCT_EXPORT_METHOD(sampleMethod:(NSString *)stringArgument numberParameter:(nonnull NSNumber *)numberArgument callback:(RCTResponseSenderBlock)callback)
+- (dispatch_queue_t)methodQueue
 {
-    // TODO: Implement some actually useful functionality
-    callback(@[[NSString stringWithFormat: @"numberArgument: %@ stringArgument: %@", numberArgument, stringArgument]]);
+  return dispatch_get_main_queue();
+}
+
+RCT_EXTERN_METHOD(showInAppReview:
+          (RCTPromiseResolveBlock)resolve
+          rejecter:(RCTPromiseRejectBlock)reject)
+
++ (BOOL)requiresMainQueueSetup
+{
+  return YES;
 }
 
 @end
